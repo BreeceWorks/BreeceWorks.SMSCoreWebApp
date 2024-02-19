@@ -1,0 +1,49 @@
+﻿@page "/newOperator"
+
+
+<h3>New Operator</h3>
+
+@if (CreatingOperator == null && ErrorMessage == null)
+{
+    <p>
+        <em>Loading ...</em>
+    </p>
+}
+else if (!String.IsNullOrEmpty(ErrorMessage))
+{
+    <p>
+        <em>@ErrorMessage</em>
+    </p>
+}
+@if (CreatingOperator != null)
+{
+    <table>
+        <tr><td><label>First Name: </label></td><td><InputText @bind-Value="CreatingOperator.FirstName" /></td><td>*required</td></tr>
+        <tr><td><label>Last Name: </label></td><td><InputText @bind-Value="CreatingOperator.LastName" /></td><td>*required</td></tr>
+        <tr><td><label>Email: </label></td><td><InputText @bind-Value="CreatingOperator.Email" /></td><td>*required</td></tr>
+        <tr><td><label>Phone Number: </label></td><td><InputText @bind-Value="CreatingOperator.PhoneNumber" /><td>*required</td></td></tr>
+        <tr><td><label>Office Number: </label></td><td><InputText @bind-Value="CreatingOperator.OfficeNumber" /></td></tr>
+        <tr><td><label>Title: </label></td><td><InputText @bind-Value="CreatingOperator.Title" /></td></tr>
+        <tr><td><label>Identity Provider: </label></td><td><InputText @bind-Value="CreatingOperator.IdentityProvider" /></td></tr>
+    </table>
+    @if (CreatingOperator.Roles != null && CreatingOperator.Roles.Count > 0)
+    {
+        <table>
+            @for (int i = 0; i < CreatingOperator.Roles.Count; i++)
+            {
+                int index = i;
+                int roleNumber = i + 1;
+                <tr>
+                    <td>Role @roleNumber </td>
+                    <td><input type="text" @onchange="(e) => UpdateValue(index, e)" value="@CreatingOperator.Roles[i]" /></td>
+                    <td><button @onclick="@(() => RemoveRole(index))">Delete</button></td>
+                </tr>
+            }
+        </table>
+    }
+    <button @onclick="@(() => AddRole())">Add Role</button>
+    <button @onclick="@(() => Submit())">Submit</button>
+    <button @onclick="@(() => Cancel())">Cancel</button>
+
+}
+

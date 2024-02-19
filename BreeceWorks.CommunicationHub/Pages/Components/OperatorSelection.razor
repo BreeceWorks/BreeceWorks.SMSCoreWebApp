@@ -1,0 +1,23 @@
+﻿
+@if (Operatormaster == null && ErrorMessage == null)
+{
+    <p>
+        <em>Loading ...</em>
+    </p>
+}
+else if (!String.IsNullOrEmpty(ErrorMessage))
+{
+    <p>
+        <em>@ErrorMessage</em>
+    </p>
+}
+else if (Operatormaster != null)
+{
+    <select class="custom-select"  @bind="@Value">
+        <option value="Select" selected disabled="disabled">(Choose Operator)</option>
+        @foreach (BreeceWorks.Shared.CaseObjects.Operator curOperator in Operatormaster)
+        {
+            <option value="@curOperator.Email"> @curOperator.FirstName @curOperator.LastName : @curOperator.Email</option>
+        }
+    </select>
+}  
