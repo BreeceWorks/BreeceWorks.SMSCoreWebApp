@@ -2,6 +2,7 @@
 using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Enums;
 using Microsoft.AspNetCore.Components;
+using BreeceWorks.CommunicationHub.Pages.Components;
 
 namespace BreeceWorks.CommunicationHub.Pages.Case
 {

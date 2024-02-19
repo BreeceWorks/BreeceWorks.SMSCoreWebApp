@@ -12,7 +12,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Operator
         [Inject]
         private NavigationManager NavManager { get; set; }
 
-        public Dispatcher.Proxies.Operator? EditingOperator { get; set; }
+        public BreeceWorks.Shared.CaseObjects.Operator? EditingOperator { get; set; }
         public String? ErrorMessage { get; set; }
 
         protected override async Task OnInitializedAsync()

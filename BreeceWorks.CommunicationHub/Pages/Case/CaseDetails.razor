@@ -1,4 +1,5 @@
-﻿@page "/caseDetails"
+﻿@using BreeceWorks.CommunicationHub.Pages.Components;
+@page "/caseDetails"
 
 <h3>Case Details</h3>
 
@@ -14,7 +15,7 @@ else
     }
         <table>
             <tr>
-                <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
+            <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
                 <td><button @onclick="@(() => ReassignCase())">Reassign Case</button></td>
                 <td><button @onclick="@(() => UnassignCase())">Unassign Case</button></td>
             </tr>

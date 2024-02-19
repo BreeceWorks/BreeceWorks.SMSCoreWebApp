@@ -1,7 +1,6 @@
 ﻿using BreeceWorks.CommunicationHub.Data;
 using BreeceWorks.Shared.CaseObjects;
 using Microsoft.AspNetCore.Components;
-using BreeceWorks.CommunicationHub.Data;
 
 namespace BreeceWorks.CommunicationHub.Pages.Customer
 {
