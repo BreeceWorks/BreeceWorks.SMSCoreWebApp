@@ -1,0 +1,71 @@
+    {
+      "id": "33184205-24e5-4995-b3d7-601118fbd8ea",
+      "type": "text",
+      "formatting": "standard",
+      "data": "i want to talk to my lawyer",
+      "channelSource": "mobile",
+      "author": {
+        "_id": "75f2b888-dca1-4596-9cad-325d1f8a6e54",
+        "role": "enduser",
+        "profile": {
+          "firstName": "Tom",
+          "lastName": "Riddle"
+        }
+      },
+      "createdAt": "2022-08-25T14:19:17.110Z",
+      "dateFormatted": "08-25-2022",
+      "timeFormatted": "10:19:17 AM EDT",
+      "messageClassifications": {
+        "needsAttention": true,
+        "needsAction":false
+      },
+    }
+
+{
+          "id": "(Message ID - Unique)",
+          "type": "text (text, image, file)",
+          "formatting": "standard",
+          "data": "hello",
+          "channelSource": "mobile (mobile, marley)",
+          "author": {
+            "_id": "(Customer or Primary Contact ID - Unique)",
+            "profile": {
+              "firstName": "Smith",
+              "lastName": "John"
+            }
+          },
+          "createdAt": "2021-08-12T15:18:51.580Z",
+          "dateFormatted": "08-12-2021",
+          "timeFormatted": "11:18:51 AM EDT"
+        }
+
+
+
+{
+      "id": "98b71187-3119-4e39-89db-9e8744f031c3",
+      "type": "text",
+      "formatting": "ai",
+      "data": "Hi Jean-Luc, thanks for reporting your claim #000-00-000203. Your representative's name is Steven Colon.",
+      "channelSource": "ai",
+      "createdAt": "2023-01-31T16:23:19.809Z",
+      "dateFormatted": "01-31-2023",
+      "timeFormatted": "11:23:19 AM EST"
+    },
+    {
+      "id": "c017f03c-1c84-4f96-b19d-45a1676a8121",
+      "type": "text",
+      "formatting": "standard",
+      "data": "Hi",
+      "channelSource": "mobile",
+      "author": {
+        "_id": "4d66ffff-8e07-40fb-a308-b41f44bb64e7",
+        "role": "enduser",
+        "profile": {
+          "firstName": "Jean-Luc",
+          "lastName": "Picard"
+        }
+      },
+      "createdAt": "2023-01-31T16:24:09.156Z",
+      "dateFormatted": "01-31-2023",
+      "timeFormatted": "11:24:09 AM EST"
+    }

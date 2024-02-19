@@ -1,0 +1,50 @@
+﻿@page "/editOperator"
+
+
+
+<h3>Edit Operator</h3>
+
+
+@if (EditingOperator == null && ErrorMessage == null)
+{
+    <p>
+        <em>Loading ...</em>
+    </p>
+}
+else if (!String.IsNullOrEmpty(ErrorMessage))
+{
+    <p>
+        <em>@ErrorMessage</em>
+    </p>
+}
+@if (EditingOperator != null)
+{
+        <table>
+            <tr><td><label>First Name: </label></td><td><InputText @bind-Value="EditingOperator.FirstName" /></td><td>*required</td></tr>
+            <tr><td><label>Last Name: </label></td><td><InputText @bind-Value="EditingOperator.LastName" /></td><td>*required</td></tr>
+            <tr><td><label>Email: </label></td><td><InputText @bind-Value="EditingOperator.Email" /></td><td>*required</td></tr>
+            <tr><td><label>Phone Number: </label></td><td><InputText @bind-Value="EditingOperator.PhoneNumber" /><td>*required</td></td></tr>
+            <tr><td><label>Office Number: </label></td><td><InputText @bind-Value="EditingOperator.OfficeNumber" /></td></tr>
+            <tr><td><label>Title: </label></td><td><InputText @bind-Value="EditingOperator.Title" /></td></tr>
+            <tr><td><label>Identity Provider: </label></td><td><InputText @bind-Value="EditingOperator.IdentityProvider" /></td></tr>
+        </table>
+        @if (EditingOperator.Roles != null && EditingOperator.Roles.Count > 0)
+        {
+            <table>
+            @for (int i = 0; i < EditingOperator.Roles.Count; i++)
+            {
+                    int index = i;
+                    int roleNumber = i + 1;
+                    <tr>
+                        <td>Role @roleNumber </td>
+                        <td><input type="text" @onchange="(e) => UpdateValue(index, e)" value="@EditingOperator.Roles[i]" /></td>
+                        <td><button @onclick="@(() => RemoveRole(index))">Delete</button></td>
+                </tr>
+            }
+            </table>
+        }
+    <button @onclick="@(() => AddRole())">Add Role</button>
+    <button @onclick="@(() => Submit())">Submit</button>
+    <button @onclick="@(() => Cancel())">Cancel</button>
+
+}

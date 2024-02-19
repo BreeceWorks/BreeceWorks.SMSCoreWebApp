@@ -1,0 +1,45 @@
+﻿@page "/casemanagement"
+
+<h3>Case Management</h3>
+
+@if (allCases == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (allCases.Errors != null && allCases.Errors.Any())
+    {
+        <p><em>@allCases.Errors[0].Detail</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Case State</th>
+                    <th>Case Type</th>
+                    <th>Claim Number</th>
+                    <th>Policy Number</th>
+                    <th>Date Of Loss</th>
+                    <th>Get Case Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customerCase in allCases.Cases)
+                {
+                    <tr>
+                        <td>@customerCase.State</td>
+                        <td>@customerCase.CaseType</td>
+                        <td>@customerCase.CaseData.ClaimNumber</td>
+                        <td>@customerCase.CaseData.PolicyNumber</td>
+                        <td>@customerCase.CaseData.DateOfLoss</td>
+                        <td><button @onclick="@(() => GetCaseDetails(customerCase.CaseData.Id.Value))">Get Case Details</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button @onclick="@(() => CreateCase())">Open New Case</button>
+
+    }
+}

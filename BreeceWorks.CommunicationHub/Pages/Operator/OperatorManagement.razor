@@ -1,0 +1,56 @@
+﻿@page "/operatormanagement"
+
+<PageTitle>Operator Management</PageTitle>
+
+
+<h1>Operator Management</h1>
+
+<p>Gets all currently existing operators</p>
+
+@if (operators == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{    @if (Error != String.Empty)
+    {
+        <p><em>@Error</em></p>
+    }
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Roles</th>
+                <th>Title</th>
+                <th>Edit Operator</th>
+                <th>Delete Operator</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (operators.Operators1 != null)
+            {
+                foreach (BreeceWorks.Shared.CaseObjects.Operator curOperator in operators.Operators1)
+                {
+                    <tr>
+                        <td>@curOperator.FirstName</td>
+                        <td>@curOperator.LastName</td>
+                        <td>@curOperator.Email</td>
+                        <td>@curOperator.PhoneNumber</td>
+                        <td>@GetRoles(curOperator.Roles)</td>
+                        <td>@curOperator.Title</td>
+                        <td><button @onclick="@(() => EditOperator(curOperator.Id))">Edit</button></td>
+                        <td><button @onclick="@(() => DeleteOperator(curOperator.Id))">Delete</button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <button @onclick="@(() => CreateOperator())">Create Operator</button>
+
+}
+
+
