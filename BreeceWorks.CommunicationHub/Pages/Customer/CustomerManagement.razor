@@ -1,0 +1,49 @@
+﻿@page "/customermanagement"
+
+<PageTitle>Customer Management</PageTitle>
+
+<h1>Customer Management</h1>
+
+<p>Gets all currently existing customers</p>
+
+@if (users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Role</th>
+                <th>Opt Status</th>
+                <th>Opt Status Detail</th>
+                <th>Get Active Claims For Customer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (users.Customers != null)
+             {
+                 foreach (var user in users.Customers)
+                {
+                    <tr>
+                        <td>@user.First</td>
+                        <td>@user.Last</td>
+                        <td>@user.Email</td>
+                        <td>@user.Mobile</td>
+                        <td>@user.Role</td>
+                        <td>@user.OptStatus.ToString()</td>
+                        <td>@user.OptStatusDetail</td>
+                        <td><button @onclick="@(() => GetClaims(user.Id.Value))">Get Active Claims</button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+

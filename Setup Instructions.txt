@@ -1,0 +1,57 @@
+TODO:
+
+	9.	add operators and test creating case with created by, primary contact and secondary operators
+
+
+	        private async void RelayMessageToChat(SmsRequest request)
+        {
+            try
+            {
+                using var tokenClient = new HttpClient();
+
+                var tokenResponse = await tokenClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+                {
+                    Address = "https://demo.duendesoftware.com/connect/token",
+
+                    ClientId = "m2m",
+                    ClientSecret = "secret",
+                    Scope = "api"
+                });
+                var accessToken = tokenResponse.AccessToken;
+
+                var connection = new HubConnectionBuilder()
+                    .WithUrl("https://localhost:7044/chathub",
+                        o => o.AccessTokenProvider = () => Task.FromResult(accessToken))
+                    .Build();
+
+                await connection.StartAsync();
+                await connection.SendAsync("SendMessage", GetChatUserID(request), request.Body, GetChatFrom(request));
+                await connection.StopAsync();
+            }
+            catch { }
+
+        }
+
+
+
+
+
+Package Manager Console
+1.	Set the startup project for the solution to BreeceWorks.CommunicationWebApi for all of these commands.  The default project setting in the package manager console 
+	will change for each set of commands, but the startup project for the solution should remain BreeceWorks.CommunicationWebApi
+
+2.	With Default projetc set to "BreeceWorks.Shared" and startup project set to "BreeceWorks.CommunicationWebApi".  
+    BreeceWorks.Shared is a class library, so we won't set the startup project in the solution to that, only the default project setting in the
+	Package Manager Console.
+	a.	EntityFrameworkCore\add-migration initialMigration -Context ConfigurationDbContext
+	b.	EntityFrameworkCore\update-database -Context ConfigurationDbContext
+
+	c.	EntityFrameworkCore\add-migration initialMigration -Context CommunicationDbContext
+	d.	EntityFrameworkCore\update-database -Context CommunicationDbContext
+
+
+
+
+
+
+

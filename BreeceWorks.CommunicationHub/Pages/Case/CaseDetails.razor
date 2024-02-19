@@ -1,0 +1,108 @@
+﻿@page "/caseDetails"
+
+<h3>Case Details</h3>
+
+@if (curCase == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (curCase.Errors != null && curCase.Errors.Any())
+    {
+        <p><em>@curCase.Errors[0].Detail</em></p>
+    }
+        <table>
+            <tr>
+                <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
+                <td><button @onclick="@(() => ReassignCase())">Reassign Case</button></td>
+                <td><button @onclick="@(() => UnassignCase())">Unassign Case</button></td>
+            </tr>
+        </table>
+        @if (curCase.CaseData != null)
+        {
+            <table>
+                <tr>
+                    <td><button @onclick="@(() => EditCase(curCase.CaseData.Id))">Edit Case</button></td>
+                </tr>
+            </table>
+            <h4>Case Data</h4>
+            <p>Case ID: @curCase.CaseData.Id</p>
+            <p>Case ClaimNumber: @curCase.CaseData.ClaimNumber</p>
+            <p>Case DateOfLoss: @curCase.CaseData.DateOfLoss</p>
+            <p>Case PolicyNumber: @curCase.CaseData.PolicyNumber</p>
+            <p>Case Deductible: @curCase.CaseData.Deductible</p>
+            <p>Case Brand:  <div><InputText @bind-Value="curCase.CaseData.Brand" /></div></p>
+            <p>
+                Case Archived: @curCase.CaseData.Archived <div>
+                    <InputRadioGroup Name="Archived" @bind-Value="@curCase.CaseData.Archived">
+                        <InputRadio Name="Archived" Value="@true" />True<br>
+                        <InputRadio Name="Archived" Value="@false" />False<br>
+                    </InputRadioGroup>
+                </div>
+            </p>
+            @if (curCase.CaseData.LineOfBusiness != null)
+            {
+                <h5>Line of Business</h5>
+                <p>Type: <div><InputText @bind-Value="curCase.CaseData.LineOfBusiness.Type" /></div></p>
+                <p>SubType: <div><InputText @bind-Value="curCase.CaseData.LineOfBusiness.SubType" /></div></p>
+            }
+        }
+        
+        <table>
+            <tr>
+                <td><p>Case State: @curCase.State</p></td>
+                @if (curCase.State.ToLower() == "open")
+                {
+                    <td><button @onclick="@(() => CloseCase())">Close Case</button></td>
+                }
+                else if (curCase.State.ToLower() == "closed")
+                {
+                    <td><button @onclick="@(() => ReopenCase())">Reopen Case</button></td>
+                }
+            </tr>
+        </table>
+        <p>Case Type: @curCase.CaseType</p>
+        <p>Case Business Name: @curCase.BusinessName</p>
+        <p>Case Privacy: @curCase.Privacy</p>
+        <p>Case Language Preference: @curCase.LanguagePreference</p>
+        @if(curCase.Customer != null)
+        {
+            <h4>Customer</h4>
+            <p>First Name: @curCase.Customer.First</p>
+            <p>Last Name: @curCase.Customer.Last</p>
+            <p>Email: @curCase.Customer.Email</p>
+            <p>Mobile: @curCase.Customer.Mobile</p>
+            <p>OptStatus: @curCase.Customer.OptStatus</p>
+            <p>OptStatusDetail: @curCase.Customer.OptStatusDetail</p>
+        }
+        @if (curCase.PrimaryContact != null)
+        {
+            <h4>Primary Contact</h4>
+            <p>First Name: @curCase.PrimaryContact.FirstName</p>
+            <p>Last Name: @curCase.PrimaryContact.LastName</p>
+            <p>Email: @curCase.PrimaryContact.Email</p>
+            <p>Mobile: @curCase.PrimaryContact.PhoneNumber</p>
+        }
+        @if (curCase.CreatedBy != null)
+        {
+            <h4>Created By</h4>
+            <p>First Name: @curCase.CreatedBy.FirstName</p>
+            <p>Last Name: @curCase.CreatedBy.LastName</p>
+            <p>Email: @curCase.CreatedBy.Email</p>
+            <p>Mobile: @curCase.CreatedBy.PhoneNumber</p>
+        }
+        @if(curCase.SecondaryOperators != null)
+        {
+            @foreach(BreeceWorks.Shared.CaseObjects.Operator curOperator in curCase.SecondaryOperators)
+            {
+                <h4>Secondary Operator</h4>
+                <p>First Name: @curOperator.FirstName</p>
+                <p>Last Name: @curOperator.LastName</p>
+                <p>Email: @curOperator.Email</p>
+                <p>Mobile: @curOperator.PhoneNumber</p>
+            }
+        }
+    
+}
+
