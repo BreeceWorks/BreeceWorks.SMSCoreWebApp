@@ -1,4 +1,6 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
+using BreeceWorks.CommunicationHub.Dispatcher.Proxies;
+using BreeceWorks.CommunicationHub.Pages.Components;
 
 namespace BreeceWorks.CommunicationHub.Data.Implementation
 {
@@ -435,6 +437,150 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
+        public CaseUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Case updatedCase)
+        {
+            if (updatedCase == null)
+            {
+                return null;
+            }
+            else
+            {
+                CaseUpdateRqst caseUpdateRqst = new CaseUpdateRqst()
+                {
+                    BusinessName = updatedCase.BusinessName,
+                    CaseData = TranslateToProxy(updatedCase.CaseData),
+                    CreatedBy = TranslateToProxy(updatedCase.CreatedBy),
+                    LanguagePreference = TranslateToLanguagePreferenceProxy(updatedCase.LanguagePreference),
+                    PrimaryContact = TranslateToPrimaryContactCaseCreateUpdateRqstProxy(updatedCase.PrimaryContact),
+                    Privacy = TranslateToPrivacyProxy(updatedCase.Privacy),
+                    SecondaryOperators = TranslateToProxy(updatedCase.SecondaryOperators)
+                };
+                return caseUpdateRqst;
+            }
+        }
+
+        CaseDataCreateUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.CaseData caseData)
+        {
+            if (caseData == null)
+            {
+                return null;
+            }
+            else
+            {
+                CaseDataCreateUpdateRqst caseDataCreateUpdateRqst = new CaseDataCreateUpdateRqst()
+                {
+                    Brand = caseData.Brand,
+                    ClaimNumber = caseData.ClaimNumber,
+                    DateOfLoss = caseData.DateOfLoss,
+                    Deductible = caseData.Deductible,
+                    LineOfBusiness = TranslateToProxy(caseData.LineOfBusiness),
+                    PolicyNumber = caseData.PolicyNumber,
+                };
+                return caseDataCreateUpdateRqst;
+            }
+        }
+
+        LineOfBusinessRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.LineOfBusiness lineOfBusiness)
+        {
+            if (lineOfBusiness == null)
+            {
+                return null;
+            }
+            else
+            {
+                LineOfBusinessRqst lineOfBusinessRqst = new LineOfBusinessRqst()
+                {
+                    SubType = lineOfBusiness.SubType,
+                    Type = lineOfBusiness.Type,
+                };
+                return lineOfBusinessRqst;
+            }
+        }
+
+        OperatorBaseRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
+        {
+            if ( curOperator == null)
+            {
+                return null;
+            }
+            else
+            {
+                OperatorBaseRqst operatorBaseRqst = new OperatorBaseRqst()
+                {
+                    Email = curOperator.Email,
+                };
+                return operatorBaseRqst;
+            }
+        }
+
+        PrimaryContactCaseCreateUpdateRqst TranslateToPrimaryContactCaseCreateUpdateRqstProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
+        {
+            if (curOperator == null)
+            {
+                return null;
+            }
+            else
+            {
+                PrimaryContactCaseCreateUpdateRqst operatorBaseRqst = new PrimaryContactCaseCreateUpdateRqst()
+                {
+                    Email = curOperator.Email,
+                    First = curOperator.FirstName,
+                    Last = curOperator.LastName,
+                };
+                return operatorBaseRqst;
+            }
+        }
+
+        LanguagePreference? TranslateToLanguagePreferenceProxy(String languagePreference)
+        {
+            if (String.IsNullOrEmpty(languagePreference))
+            {
+                return null;
+            }
+            else
+            {
+                LanguagePreference languagePreference1 = (LanguagePreference)Enum.Parse(typeof(BreeceWorks.Shared.Enums.LanguagePreference), languagePreference);
+                return languagePreference1;
+            }
+        }
+
+        Privacy? TranslateToPrivacyProxy(String privacyPreference)
+        {
+            if (String.IsNullOrEmpty(privacyPreference))
+            {
+                return null;
+            }
+            else
+            {
+                Privacy privacy = (Privacy)Enum.Parse(typeof(BreeceWorks.Shared.Enums.Privacy), privacyPreference);
+                return privacy;
+            }
+        }
+
+        List<SecondaryOperatorCreateUpdateRqst> TranslateToProxy(List<BreeceWorks.Shared.CaseObjects.Operator> secondaryOperators)
+        {
+            if (secondaryOperators == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<SecondaryOperatorCreateUpdateRqst> secondaryOperatorCreateUpdateRqsts = new List<SecondaryOperatorCreateUpdateRqst>();
+                foreach(BreeceWorks.Shared.CaseObjects.Operator curOperator in secondaryOperators)
+                {
+                    secondaryOperatorCreateUpdateRqsts.Add(TranslateToSecondaryOperatorCreateUpdateRqstProxy(curOperator));
+                }
+                return secondaryOperatorCreateUpdateRqsts;
+            }
+        }
+        SecondaryOperatorCreateUpdateRqst TranslateToSecondaryOperatorCreateUpdateRqstProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
+        {
+            SecondaryOperatorCreateUpdateRqst secondaryOperatorCreateUpdateRqst = new SecondaryOperatorCreateUpdateRqst()
+            {
+                Email = curOperator.Email,
+            };
+            return secondaryOperatorCreateUpdateRqst;
+        }
         #endregion
     }
 }

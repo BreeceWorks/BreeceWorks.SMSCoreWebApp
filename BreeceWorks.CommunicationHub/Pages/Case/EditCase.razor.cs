@@ -1,13 +1,15 @@
 ﻿using BreeceWorks.CommunicationHub.Data;
+using BreeceWorks.Shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace BreeceWorks.CommunicationHub.Pages.Case
 {
-    public partial class CaseDetails
+    public partial class EditCase
     {
         private BreeceWorks.Shared.CaseObjects.Case? curCase { get; set; }
-        
+        private String? ErrorMessage { get; set; }
+
         [Inject]
         private CommunicationService CommunicationService
         {
@@ -19,6 +21,10 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         private NavigationManager NavManager { get; set; }
 
         public String? AssignOperatorID { get; set; }
+        public String? PrivacySelection { get; set; }
+
+        public String? LanguagePreferenceSelection { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -34,21 +40,51 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
                     {
                         AssignOperatorID = curCase.PrimaryContact.Email;
                     }
+                    PrivacySelection = curCase.Privacy;
+                    LanguagePreferenceSelection = curCase.LanguagePreference;
                 }
             }
         }
 
-        protected void EditCase(Guid? caseId)
+        protected void Cancel()
         {
-            NavManager.NavigateTo(string.Format("/editCase?CaseID={0}", caseId));
+            NavManager.NavigateTo(string.Format("/caseDetails?CaseID={0}", curCase.CaseData.Id));
         }
-        protected void ReturnToList()
+        protected async void SaveCase()
         {
-            NavManager.NavigateTo("/casemanagement");
+            if (!String.IsNullOrEmpty(LanguagePreferenceSelection))
+            {
+                curCase.LanguagePreference = LanguagePreferenceSelection;
+            }
+            if (!String.IsNullOrEmpty(PrivacySelection))
+            {
+                curCase.Privacy = PrivacySelection;
+            }
+            curCase = await CommunicationService.UpdateCase(curCase);
+            NavManager.NavigateTo(string.Format("/caseDetails?CaseID={0}", curCase.CaseData.Id));
         }
+
+        protected void AddLineOfBusiness()
+        {
+            if (curCase != null && curCase.CaseData != null)
+            {
+                curCase.CaseData.LineOfBusiness = new BreeceWorks.Shared.CaseObjects.LineOfBusiness();
+                StateHasChanged();
+            }
+        }
+
+        protected void RemoveLineOfBusiness()
+        {
+            if (curCase != null && curCase.CaseData != null)
+            {
+                curCase.CaseData.LineOfBusiness = null;
+                StateHasChanged();
+            }
+        }
+
         protected async void ReassignCase()
         {
-            if (AssignOperatorID != null && curCase != null &&  curCase.CaseData != null && curCase.CaseData.Id != null)
+            if (AssignOperatorID != null && curCase != null && curCase.CaseData != null && curCase.CaseData.Id != null)
             {
                 curCase = await CommunicationService.AssignCase(curCase.CaseData.Id.Value, AssignOperatorID);
                 if (curCase.PrimaryContact != null)
@@ -96,6 +132,5 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
                 StateHasChanged();
             }
         }
-
     }
 }

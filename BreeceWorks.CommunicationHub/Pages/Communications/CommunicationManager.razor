@@ -1,6 +1,6 @@
-﻿@page "/casemanagement"
+﻿@page "/communicationmanagement"
 
-<h3>Case Management</h3>
+<h3>Communication Management</h3>
 
 @if (allCases == null)
 {
@@ -34,12 +34,11 @@ else
                         <td>@customerCase.CaseData.ClaimNumber</td>
                         <td>@customerCase.CaseData.PolicyNumber</td>
                         <td>@customerCase.CaseData.DateOfLoss</td>
-                        <td><button @onclick="@(() => GetCaseDetails(customerCase.CaseData.Id.Value))">Get Case Details</button></td>
+                        <td><button @onclick="@(() => OpenCaseCommunications(customerCase.CaseData.Id.Value))">Open Case Communications</button></td>
                     </tr>
                 }
             </tbody>
         </table>
-        <button @onclick="@(() => CreateCase())">Open New Case</button>
 
     }
 }

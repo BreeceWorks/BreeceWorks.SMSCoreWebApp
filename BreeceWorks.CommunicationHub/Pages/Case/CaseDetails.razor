@@ -11,7 +11,7 @@ else
 {
     @if (curCase.Errors != null && curCase.Errors.Any())
     {
-        <p><em>@curCase.Errors[0].Detail</em></p>
+        <p style="color:red"><em>@curCase.Errors[0].Detail</em></p>
     }
         <table>
             <tr>
@@ -104,6 +104,9 @@ else
                 <p>Mobile: @curOperator.PhoneNumber</p>
             }
         }
-    
+    <table>
+        <tr><td><button @onclick="@(() => ReturnToList())">Return To List</button></td></tr>
+    </table>
+
 }
 

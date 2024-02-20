@@ -60,6 +60,12 @@ namespace BreeceWorks.CommunicationHub.Data
             return _translatorService.TranslateToModel(caseResponse);
         }
 
+        public async Task<BreeceWorks.Shared.CaseObjects.Case> UpdateCase(BreeceWorks.Shared.CaseObjects.Case updatedCase)
+        {
+            Dispatcher.Proxies.Case caseResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Case, ApiClient>(x => x.CasePutAsync(updatedCase.CaseData.Id.ToString(), _translatorService.TranslateToProxy(updatedCase)));
+            return _translatorService.TranslateToModel(caseResponse);
+        }
+
         public async Task<BreeceWorks.Shared.CaseObjects.CaseRspses> GetAllCases()
         {
             Dispatcher.Proxies.CaseRspses caseResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.CaseRspses, ApiClient>(x => x.CaseGetAsync());

@@ -15,5 +15,6 @@ namespace BreeceWorks.CommunicationHub.Data.Contracts
         BreeceWorks.Shared.CaseObjects.CaseRspses TranslateToModel(Dispatcher.Proxies.CaseRspses caseRspses);
         BreeceWorks.Shared.CaseObjects.ActiveCases TranslateToModel(Dispatcher.Proxies.ActiveCases activeCases);
         Dispatcher.Proxies.CaseCreateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.CaseCreateRqst caseCreateRqst);
+        Dispatcher.Proxies.CaseUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Case updatedCase);
     }
 }
