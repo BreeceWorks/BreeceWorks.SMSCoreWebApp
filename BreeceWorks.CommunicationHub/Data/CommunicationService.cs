@@ -88,6 +88,12 @@ namespace BreeceWorks.CommunicationHub.Data
             }
         }
 
+        public async Task<BreeceWorks.Shared.CaseObjects.CaseTranscript> GetCaseTranscript(Guid caseId)
+        {
+            Dispatcher.Proxies.CaseTranscript caseTranscript = await _dispatcher.DispatchRequest<Dispatcher.Proxies.CaseTranscript, ActionsClient>(x => x.DownloadAsync(caseId.ToString()));
+            return _translatorService.TranslateToModel(caseTranscript);
+        }
+
         public async Task<BreeceWorks.Shared.CaseObjects.Case> ReopenCase(Guid caseId)
         {
             Dispatcher.Proxies.Case caseResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Case, ActionsClient>(x => x.ReopenAsync(caseId.ToString()));

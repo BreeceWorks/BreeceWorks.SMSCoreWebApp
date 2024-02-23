@@ -45,6 +45,10 @@ namespace BreeceWorks.CommunicationWebApi.Controllers
             ResponseObjects.CaseTranscript caseRspse = new ResponseObjects.CaseTranscript();
             if (caseDto != null)
             {
+                if (caseDto.Messages != null)
+                {
+                    caseDto.Messages = caseDto.Messages.OrderBy(m=>m.createdAt).ToList();
+                }
                 CaseTranscriptDto caseTranscriptDto = _mapper.Map<CaseTranscriptDto>(caseDto);
                 caseTranscriptObject = _translatorService.TranslateToObject(caseTranscriptDto);
                 if (caseTranscriptObject.PrimaryContact != null)

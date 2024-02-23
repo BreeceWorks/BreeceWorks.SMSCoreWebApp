@@ -1,5 +1,4 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
-using BreeceWorks.CommunicationHub.Dispatcher.Proxies;
 using BreeceWorks.CommunicationHub.Pages.Components;
 
 namespace BreeceWorks.CommunicationHub.Data.Implementation
@@ -277,8 +276,203 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
                     Role = customer.Role,
                 };
             }
-            #endregion
         }
+
+        public BreeceWorks.Shared.CaseObjects.CaseTranscript TranslateToModel(Dispatcher.Proxies.CaseTranscript caseTranscript)
+        {
+            if (caseTranscript == null)
+            {
+                return null;
+            }
+            BreeceWorks.Shared.CaseObjects.CaseTranscript caseTranscript1 = new BreeceWorks.Shared.CaseObjects.CaseTranscript()
+            {
+                BusinessName = caseTranscript.BusinessName,
+                CaseData = TranslateToModel(caseTranscript.CaseData),
+                CaseType = caseTranscript.CaseType,
+                CreatedBy = TranslateToModel(caseTranscript.CreatedBy),
+                Customer = TranslateToModel(caseTranscript.Customer),   
+                Errors = TranslateToModel(caseTranscript.Errors),
+                LanguagePreference = caseTranscript.LanguagePreference,
+                Messages = TranslateToModel(caseTranscript.Messages),
+                PrimaryContact = TranslateToModel(caseTranscript.PrimaryContact),
+                Privacy = caseTranscript.Privacy,
+                SecondaryOperators = TranslateToModel(caseTranscript.SecondaryOperators),
+                State = caseTranscript.State,
+            };
+            return caseTranscript1;
+        }
+
+        public List<BreeceWorks.Shared.CaseObjects.Message> TranslateToModel(List<Dispatcher.Proxies.Message> messages)
+        {
+            if (messages == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<BreeceWorks.Shared.CaseObjects.Message> messages1 = new List<BreeceWorks.Shared.CaseObjects.Message>();
+
+                foreach(Dispatcher.Proxies.Message message in messages)
+                {
+                    messages1.Add(TranslateToModel(message));
+                }
+
+                return messages1;
+            }
+        }
+
+        public BreeceWorks.Shared.CaseObjects.Message TranslateToModel(Dispatcher.Proxies.Message message)
+        {
+            if (message == null)
+            {
+                return null;
+            }
+            else
+            {
+                BreeceWorks.Shared.CaseObjects.Message message1 = new BreeceWorks.Shared.CaseObjects.Message()
+                {
+                    CreatedAt = message.CreatedAt,
+                    NeedsAction = message.NeedsAction,
+                    NeedsAttention = message.NeedsAttention,
+                    ChannelSource = TranslateToModel(message.ChannelSource),
+                    Id = message.Id,
+                    SMSId = message.SMSId,
+                    Data = message.Data,
+                    Status = message.Status,
+                    Author = TranslateToModel(message.Author),
+                    MessageAttachments = TranslateToModel(message.MessageAttachments),
+                    Formatting = TranslateToModel(message.Formatting),
+                    Type = TranslateToModel(message.Type)
+                };
+                return message1;
+            }
+        }
+
+        public BreeceWorks.Shared.CaseObjects.MessageAuthor TranslateToModel(Dispatcher.Proxies.MessageAuthor messageAuthor)
+        {
+            if (messageAuthor == null)
+            {
+                return null;
+            }
+            else
+            {
+                BreeceWorks.Shared.CaseObjects.MessageAuthor messageAuthor1 = new BreeceWorks.Shared.CaseObjects.MessageAuthor()
+                {
+                    Id = messageAuthor.Id,
+                    Profile = TranslateToModel(messageAuthor.Profile),
+                    Role = TranslateToModel(messageAuthor.Role),
+                };
+                return messageAuthor1;
+            }
+        }
+
+        public BreeceWorks.Shared.CaseObjects.MessageAuthorProfile TranslateToModel(Dispatcher.Proxies.MessageAuthorProfile messageAuthorProfile)
+        {
+            if (messageAuthorProfile == null)
+            {
+                return null;
+            }
+            else
+            {
+                BreeceWorks.Shared.CaseObjects.MessageAuthorProfile messageAuthorProfile1 = new BreeceWorks.Shared.CaseObjects.MessageAuthorProfile()
+                {
+                    FirstName = messageAuthorProfile.FirstName,
+                    LastName = messageAuthorProfile.LastName,
+                };
+                return messageAuthorProfile1;
+            }
+        }
+
+        public BreeceWorks.Shared.Enums.MessageAuthorRole? TranslateToModel(Dispatcher.Proxies.MessageAuthorRole? messageAuthorRole)
+        {
+            if (messageAuthorRole == null)
+            {
+                return null;
+            }
+            else
+            {
+                return (BreeceWorks.Shared.Enums.MessageAuthorRole?)messageAuthorRole;
+            }
+        }
+
+        public BreeceWorks.Shared.Enums.MessageChannelSource? TranslateToModel(Dispatcher.Proxies.MessageChannelSource? channelSource)
+        {
+            if(channelSource == null)
+            {
+                return null;
+            }
+            else
+            {
+                return (BreeceWorks.Shared.Enums.MessageChannelSource?)channelSource;
+            }
+        }
+
+        public List<BreeceWorks.Shared.CaseObjects.MessageAttachment> TranslateToModel(List<Dispatcher.Proxies.MessageAttachment> messageAttachments)
+        {
+            if (messageAttachments == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<BreeceWorks.Shared.CaseObjects.MessageAttachment> messageAttachments1 = new List<BreeceWorks.Shared.CaseObjects.MessageAttachment>();
+
+                foreach (Dispatcher.Proxies.MessageAttachment messageAttachment in messageAttachments)
+                {
+                    messageAttachments1.Add(TranslateToModel(messageAttachment));
+                }
+
+                return messageAttachments1;
+            }
+        }
+
+        public BreeceWorks.Shared.CaseObjects.MessageAttachment TranslateToModel(Dispatcher.Proxies.MessageAttachment messageAttachment)
+        {
+            if (messageAttachment == null)
+            {
+                return null;
+            }
+            else
+            {
+                BreeceWorks.Shared.CaseObjects.MessageAttachment messageAttachment1 = new BreeceWorks.Shared.CaseObjects.MessageAttachment()
+                {
+                    ContentType = messageAttachment.ContentType,
+                    Data = messageAttachment.Data,
+                    Extension = messageAttachment.Extension,
+                    Id = messageAttachment.Id,
+                    Name = messageAttachment.Name,
+                    SourceUrl = messageAttachment.SourceUrl,
+                };
+                return messageAttachment1;
+            }
+        }
+
+        public BreeceWorks.Shared.Entities.MessageFormatting? TranslateToModel(Dispatcher.Proxies.MessageFormatting? messageFormatting)
+        {
+            if (messageFormatting == null)
+            { 
+                return null; 
+            }
+            else
+            {
+                return (BreeceWorks.Shared.Entities.MessageFormatting?)messageFormatting;
+            }
+        }
+
+        public BreeceWorks.Shared.Entities.MessageType? TranslateToModel(Dispatcher.Proxies.MessageType? messageType)
+        {
+            if (messageType == null)
+            {
+                return null;
+            }
+            else
+            {
+                return (BreeceWorks.Shared.Entities.MessageType?)messageType;
+            }
+        }
+
+        #endregion
+
 
         #region TranslateToProxy
 
@@ -437,7 +631,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        public CaseUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Case updatedCase)
+        public Dispatcher.Proxies.CaseUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Case updatedCase)
         {
             if (updatedCase == null)
             {
@@ -445,7 +639,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                CaseUpdateRqst caseUpdateRqst = new CaseUpdateRqst()
+                Dispatcher.Proxies.CaseUpdateRqst caseUpdateRqst = new Dispatcher.Proxies.CaseUpdateRqst()
                 {
                     BusinessName = updatedCase.BusinessName,
                     CaseData = TranslateToProxy(updatedCase.CaseData),
@@ -459,7 +653,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        CaseDataCreateUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.CaseData caseData)
+        Dispatcher.Proxies.CaseDataCreateUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.CaseData caseData)
         {
             if (caseData == null)
             {
@@ -467,7 +661,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                CaseDataCreateUpdateRqst caseDataCreateUpdateRqst = new CaseDataCreateUpdateRqst()
+                Dispatcher.Proxies.CaseDataCreateUpdateRqst caseDataCreateUpdateRqst = new Dispatcher.Proxies.CaseDataCreateUpdateRqst()
                 {
                     Brand = caseData.Brand,
                     ClaimNumber = caseData.ClaimNumber,
@@ -480,7 +674,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        LineOfBusinessRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.LineOfBusiness lineOfBusiness)
+        Dispatcher.Proxies.LineOfBusinessRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.LineOfBusiness lineOfBusiness)
         {
             if (lineOfBusiness == null)
             {
@@ -488,7 +682,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                LineOfBusinessRqst lineOfBusinessRqst = new LineOfBusinessRqst()
+                Dispatcher.Proxies.LineOfBusinessRqst lineOfBusinessRqst = new Dispatcher.Proxies.LineOfBusinessRqst()
                 {
                     SubType = lineOfBusiness.SubType,
                     Type = lineOfBusiness.Type,
@@ -497,7 +691,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        OperatorBaseRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
+        Dispatcher.Proxies.OperatorBaseRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
         {
             if ( curOperator == null)
             {
@@ -505,7 +699,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                OperatorBaseRqst operatorBaseRqst = new OperatorBaseRqst()
+                Dispatcher.Proxies.OperatorBaseRqst operatorBaseRqst = new Dispatcher.Proxies.OperatorBaseRqst()
                 {
                     Email = curOperator.Email,
                 };
@@ -513,7 +707,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        PrimaryContactCaseCreateUpdateRqst TranslateToPrimaryContactCaseCreateUpdateRqstProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
+        Dispatcher.Proxies.PrimaryContactCaseCreateUpdateRqst TranslateToPrimaryContactCaseCreateUpdateRqstProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
         {
             if (curOperator == null)
             {
@@ -521,7 +715,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                PrimaryContactCaseCreateUpdateRqst operatorBaseRqst = new PrimaryContactCaseCreateUpdateRqst()
+                Dispatcher.Proxies.PrimaryContactCaseCreateUpdateRqst operatorBaseRqst = new Dispatcher.Proxies.PrimaryContactCaseCreateUpdateRqst()
                 {
                     Email = curOperator.Email,
                     First = curOperator.FirstName,
@@ -531,7 +725,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        LanguagePreference? TranslateToLanguagePreferenceProxy(String languagePreference)
+        Dispatcher.Proxies.LanguagePreference? TranslateToLanguagePreferenceProxy(String languagePreference)
         {
             if (String.IsNullOrEmpty(languagePreference))
             {
@@ -539,12 +733,12 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                LanguagePreference languagePreference1 = (LanguagePreference)Enum.Parse(typeof(BreeceWorks.Shared.Enums.LanguagePreference), languagePreference);
+                Dispatcher.Proxies.LanguagePreference languagePreference1 = (Dispatcher.Proxies.LanguagePreference)Enum.Parse(typeof(BreeceWorks.Shared.Enums.LanguagePreference), languagePreference);
                 return languagePreference1;
             }
         }
 
-        Privacy? TranslateToPrivacyProxy(String privacyPreference)
+        Dispatcher.Proxies.Privacy? TranslateToPrivacyProxy(String privacyPreference)
         {
             if (String.IsNullOrEmpty(privacyPreference))
             {
@@ -552,12 +746,12 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                Privacy privacy = (Privacy)Enum.Parse(typeof(BreeceWorks.Shared.Enums.Privacy), privacyPreference);
+                Dispatcher.Proxies.Privacy privacy = (Dispatcher.Proxies.Privacy)Enum.Parse(typeof(BreeceWorks.Shared.Enums.Privacy), privacyPreference);
                 return privacy;
             }
         }
 
-        List<SecondaryOperatorCreateUpdateRqst> TranslateToProxy(List<BreeceWorks.Shared.CaseObjects.Operator> secondaryOperators)
+        List<Dispatcher.Proxies.SecondaryOperatorCreateUpdateRqst> TranslateToProxy(List<BreeceWorks.Shared.CaseObjects.Operator> secondaryOperators)
         {
             if (secondaryOperators == null)
             {
@@ -565,7 +759,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
             else
             {
-                List<SecondaryOperatorCreateUpdateRqst> secondaryOperatorCreateUpdateRqsts = new List<SecondaryOperatorCreateUpdateRqst>();
+                List<Dispatcher.Proxies.SecondaryOperatorCreateUpdateRqst> secondaryOperatorCreateUpdateRqsts = new List<Dispatcher.Proxies.SecondaryOperatorCreateUpdateRqst>();
                 foreach(BreeceWorks.Shared.CaseObjects.Operator curOperator in secondaryOperators)
                 {
                     secondaryOperatorCreateUpdateRqsts.Add(TranslateToSecondaryOperatorCreateUpdateRqstProxy(curOperator));
@@ -573,14 +767,15 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
                 return secondaryOperatorCreateUpdateRqsts;
             }
         }
-        SecondaryOperatorCreateUpdateRqst TranslateToSecondaryOperatorCreateUpdateRqstProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
+        Dispatcher.Proxies.SecondaryOperatorCreateUpdateRqst TranslateToSecondaryOperatorCreateUpdateRqstProxy(BreeceWorks.Shared.CaseObjects.Operator curOperator)
         {
-            SecondaryOperatorCreateUpdateRqst secondaryOperatorCreateUpdateRqst = new SecondaryOperatorCreateUpdateRqst()
+            Dispatcher.Proxies.SecondaryOperatorCreateUpdateRqst secondaryOperatorCreateUpdateRqst = new Dispatcher.Proxies.SecondaryOperatorCreateUpdateRqst()
             {
                 Email = curOperator.Email,
             };
             return secondaryOperatorCreateUpdateRqst;
         }
+        
         #endregion
     }
 }
