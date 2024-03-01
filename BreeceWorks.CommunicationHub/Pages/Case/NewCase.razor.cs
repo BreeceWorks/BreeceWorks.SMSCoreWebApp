@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Enums;
 using Microsoft.AspNetCore.Components;
@@ -12,7 +12,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         private String? ErrorMessage { get; set; }
 
         [Inject]
-        private CommunicationService? CommunicationService
+        private ICommunicationService? CommunicationService
         {
             get;
             set;

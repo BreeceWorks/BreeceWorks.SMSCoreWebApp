@@ -58,6 +58,10 @@ namespace BreeceWorks.Shared
             public const String Incoming = "/api/case/actions/incoming-message-webhook";
             public const String StatusCallback = "/api/case/actions/sms_status_callback";
             public const String AttachmentDownloadURL = "/api/SMSAttachment/attachment-download/{0}";
+            public const String AttachmentUploadURL = "/api/SMSAttachment/attachment-upload";
         }
+
+        public const int MAX_FILESIZE = 50000 * 1024; // 50 MB
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using BreeceWorks.Shared.CaseObjects;
 using Microsoft.AspNetCore.Components;
 
@@ -7,7 +7,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
     public partial class CommunicationManager
     {
         [Inject]
-        private CommunicationService CommunicationService
+        private ICommunicationService CommunicationService
         {
             get;
             set;

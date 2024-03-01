@@ -137,7 +137,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 }
                 if (((System.Text.Json.JsonElement)messageSource).ValueKind == System.Text.Json.JsonValueKind.Object)
                 {
-                    source = TemplateMessageSource.email.ToString();
+                    source = RequestObjects.TemplateMessageSource.email.ToString();
                     System.Text.Json.JsonElement responseMessage = (System.Text.Json.JsonElement)messageSource;
                     EmailObject? email = JsonConvert.DeserializeObject<EmailObject>(responseMessage.GetRawText());
                     if (email != null)
@@ -146,7 +146,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                     }
                 }
             }
-            if (source == TemplateMessageSource.assigned.ToString())
+            if (source == RequestObjects.TemplateMessageSource.assigned.ToString())
             {
                 if (caseDto.PrimaryContact != null)
                 {
@@ -165,7 +165,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
 
             }
-            if (source == TemplateMessageSource.email.ToString() && !String.IsNullOrEmpty(sourceEmail))
+            if (source == RequestObjects.TemplateMessageSource.email.ToString() && !String.IsNullOrEmpty(sourceEmail))
             {
                 OperatorDto? assignedContact = _operatorService.GetOperatorDto(sourceEmail);
                 if (assignedContact != null)
@@ -292,6 +292,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                     {
                         foreach (var attachment in messageAttachments)
                         {
+                            attachment.data = GetData(attachment.sourceUrl);
                             _context.MessageAttachments.Add(attachment);
                             messageDto.messageAttachments.Add(attachment);
                         }
@@ -308,9 +309,9 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
         }
 
-        private MessageType GetMessageType(List<SMSAttachment> attachmentUrls)
+        private MessageType GetMessageType(List<SMSAttachment>? attachmentUrls)
         {
-            if (attachmentUrls.Count == 0)
+            if (attachmentUrls == null || attachmentUrls.Count == 0)
             {
                 return MessageType.text;
             }
@@ -386,7 +387,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                             caseId = caseDto.Id.ToString(),
                             referenceID = caseDto.ReferenceId,
                             templateValues = new Dictionary<string, string>(),
-                            source = TemplateMessageSource.ai.ToString()
+                            source = RequestObjects.TemplateMessageSource.ai.ToString()
                         };
 
                         SendTemplateMessage(templatedMessageRequest, templatedMessageDto.TemplateId);
@@ -417,6 +418,23 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             return messageTemplateName;
         }
 
+        private byte[] GetData(string url)
+        {
+            Byte[] messageBytes;
+
+            using (var client = new HttpClient())
+            {
+                var response = client.GetAsync(url).Result;
+                var httpStream = response.Content.ReadAsStream();
+
+                using (BinaryReader br = new BinaryReader(httpStream))
+                {
+                    messageBytes = br.ReadBytes((Int32)httpStream.Length);
+                }
+            }
+            return messageBytes;
+        }
+
         public SMSIncomingeMessage SendMessage(SMSOutgoingCommunication sMSMessage)
         {
             SMSOutgoingMessage sMSRequest = new SMSOutgoingMessage() { message = sMSMessage.message };
@@ -434,8 +452,12 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 MessageAttachmentDto? attachment = _context.MessageAttachments.Where(ma => ma.id.ToString() == attachmentID).FirstOrDefault();
                 if (attachment != null)
                 {
+                    if (messageDto.messageAttachments == null)
+                    {
+                        messageDto.messageAttachments = new List<MessageAttachmentDto>();
+                    }
                     messageDto.messageAttachments.Add(attachment);
-                    sMSRequest.attachmentUrls.Add(new SMSAttachment() { data = attachment.data, extension = attachment.extension, name = attachment.name, url = GetAttachmentURL(attachment.id) });
+                    sMSRequest.attachmentUrls.Add(new SMSAttachment() { extension = attachment.extension, name = attachment.name, url = GetAttachmentURL(attachment.id) });
                 }
             }
 

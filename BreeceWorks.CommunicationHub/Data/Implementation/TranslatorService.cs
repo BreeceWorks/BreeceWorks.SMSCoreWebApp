@@ -471,6 +471,54 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
+        public BreeceWorks.Shared.SMS.SMSIncomingeMessage TranslateToModel(Dispatcher.Proxies.SMSIncomingeMessage sMSIncomingeMessage)
+        {
+            if (sMSIncomingeMessage == null)
+            {
+                return null;
+            }
+            else
+            {
+                BreeceWorks.Shared.SMS.SMSIncomingeMessage sMSIncomingeMessage1 = new BreeceWorks.Shared.SMS.SMSIncomingeMessage()
+                {
+                    attachmentUrls = TranslateToModel(sMSIncomingeMessage.AttachmentUrls),
+                    errorMessage = sMSIncomingeMessage.ErrorMessage,
+                    fromNumber = sMSIncomingeMessage.FromNumber,
+                    initialStatus = sMSIncomingeMessage.InitialStatus,
+                    message = sMSIncomingeMessage.Message,
+                    messageID = sMSIncomingeMessage.MessageID,
+                    toNumber = sMSIncomingeMessage.ToNumber,
+                };
+                return sMSIncomingeMessage1;
+            }
+        }
+
+        List<BreeceWorks.Shared.SMS.SMSAttachment>? TranslateToModel(List<Dispatcher.Proxies.SMSAttachment>? sMSAttachments)
+        {
+            if (sMSAttachments == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<BreeceWorks.Shared.SMS.SMSAttachment> sMSAttachments1 = new List<BreeceWorks.Shared.SMS.SMSAttachment>();
+
+                foreach (Dispatcher.Proxies.SMSAttachment sMSAttachment in sMSAttachments)
+                {
+                    sMSAttachments1.Add(new BreeceWorks.Shared.SMS.SMSAttachment()
+                    {
+                        data = sMSAttachment.Data,
+                        extension = sMSAttachment.Extension,
+                        name = sMSAttachment.Name,
+                        url = sMSAttachment.Url,
+                    });
+                }
+
+                return sMSAttachments1;
+            }
+        }
+
+
         #endregion
 
 
@@ -775,7 +823,28 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             };
             return secondaryOperatorCreateUpdateRqst;
         }
-        
+
+        public Dispatcher.Proxies.SMSOutgoingCommunication TranslateToProxy(BreeceWorks.Shared.SMS.SMSOutgoingCommunication sMSOutgoingCommunication)
+        {
+            if (sMSOutgoingCommunication == null)
+            {
+                return null;
+            }
+            else
+            {
+                Dispatcher.Proxies.SMSOutgoingCommunication sMSOutgoingCommunication1 = new Dispatcher.Proxies.SMSOutgoingCommunication()
+                {
+                    AttachmentIDs = sMSOutgoingCommunication.attachmentIDs,
+                    CaseId = sMSOutgoingCommunication.caseId,
+                    Message = sMSOutgoingCommunication.message,
+                    Source = sMSOutgoingCommunication.source,
+                };
+                return sMSOutgoingCommunication1;
+            }
+        }
+
+
+
         #endregion
     }
 }

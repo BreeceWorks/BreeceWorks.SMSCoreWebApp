@@ -293,11 +293,11 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             if (caseDto.PrimaryContact != null)
             {
-                templatedMessageRequest.source = TemplateMessageSource.assigned.ToString();
+                templatedMessageRequest.source = RequestObjects.TemplateMessageSource.assigned.ToString();
             }
             else
             {
-                templatedMessageRequest.source = TemplateMessageSource.ai.ToString();
+                templatedMessageRequest.source = RequestObjects.TemplateMessageSource.ai.ToString();
             }
             return _messagingService.SendTemplateMessage(templatedMessageRequest, templatedMessageDto.TemplateId);
         }

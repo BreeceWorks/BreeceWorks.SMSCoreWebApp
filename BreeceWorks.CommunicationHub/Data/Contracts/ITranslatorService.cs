@@ -25,7 +25,9 @@ namespace BreeceWorks.CommunicationHub.Data.Contracts
         BreeceWorks.Shared.Entities.MessageType? TranslateToModel(Dispatcher.Proxies.MessageType? messageType);
         BreeceWorks.Shared.CaseObjects.MessageAuthorProfile TranslateToModel(Dispatcher.Proxies.MessageAuthorProfile messageAuthorProfile);
         BreeceWorks.Shared.Enums.MessageAuthorRole? TranslateToModel(Dispatcher.Proxies.MessageAuthorRole? messageAuthorRole);
+        BreeceWorks.Shared.SMS.SMSIncomingeMessage TranslateToModel(Dispatcher.Proxies.SMSIncomingeMessage sMSIncomingeMessage);
         Dispatcher.Proxies.CaseCreateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.CaseCreateRqst caseCreateRqst);
         Dispatcher.Proxies.CaseUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Case updatedCase);
+        Dispatcher.Proxies.SMSOutgoingCommunication TranslateToProxy(BreeceWorks.Shared.SMS.SMSOutgoingCommunication sMSOutgoingCommunication);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BreeceWorks.Shared;
 using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
+using BreeceWorks.SMSCoreWebApi.IControllers;
 using BreeceWorks.SMSCoreWebApi.Objects;
 using BreeceWorks.SMSCoreWebApi.Validation;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
     //TODO: This has only been completed enough for me to do some testing.  It needs to finish being fleshed out to be integrated with the BreeceWorks.CommunicationWebApi
     [Route("api/")]
     [ApiController]
-    public class TwilioSMSController : TwilioController
+    public class TwilioSMSController : TwilioController, ISMSController
     {
         private IWebHostEnvironment _env;
         private readonly IConfigureService _configureService;
@@ -68,7 +69,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         }
 
         [HttpPost, Route("[controller]/Outgoing")]
-        public SMSIncomingeMessage Outgoing(SMSOutgoingMessage sMSMessage)
+        public async Task<SMSIncomingeMessage> Outgoing(SMSOutgoingMessage sMSMessage)
         {
             SMSIncomingeMessage sMSResponseMessage = new SMSIncomingeMessage()
             {
@@ -82,7 +83,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             {
                 String? authToken = _configureService.GetValue("Twilio:AuthToken");
                 string? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
-                String statusCallBackurl = _configureService.GetValue("Twilio:StatusCallbackUrl");
+                String? statusCallBackurl = _configureService.GetValue("Twilio:StatusCallbackUrl");
 
 
 
@@ -92,7 +93,6 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
                 foreach (SMSAttachment urlString in  sMSMessage.attachmentUrls)
                 {
 
-                    //urls.Add(new Uri("https://api.twilio.com/2010-04-01/Accounts/AC031d68f58ccf94e0cc25766fcd461caf/Messages/MMdf5fddca1a707bb2a18287af80df1ae8/Media/ME266384a7c248c6d9e4f8f3852f5e784b"));
                     urls.Add(new Uri(urlString.url));
                 }
                 MessageResource sentMessage = MessageResource.Create(
@@ -137,6 +137,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 
 
         private const string SavePath = @"\App_Data\";
+
         [HttpPost, Route("[controller]/Incoming")]
         [ValidateTwilioRequest]
         public async Task<TwiMLResult> Incoming([FromForm] SmsRequest request, [FromForm] int numMedia)
@@ -150,7 +151,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
                 {
                     var mediaUrl = Request.Form[$"MediaUrl{i}"];
                     var contentType = Request.Form[$"MediaContentType{i}"];
-                    urlList.Add(new SMSAttachment() { url = mediaUrl, extension = GetDefaultExtension(contentType), data = GetData(mediaUrl), name = GetFileName(mediaUrl) });
+                    urlList.Add(new SMSAttachment() { url = mediaUrl, extension = GetDefaultExtension(contentType), name = GetFileName(mediaUrl) });
                 }
             }
 
@@ -167,32 +168,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             try
             {
                 HttpResponseMessage httpResponse = _httpClient.PostAsJsonAsync(Constants.URLTemplates.Incoming, sMSMessage).Result;
-                String? authToken = _configureService.GetValue("Twilio:AuthToken");
-                String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
-
-                TwilioClient.Init(accountSid, authToken);
-
-                if (numMedia > 0)
-                {
-                    List<String> mediaSids = new List<String>();
-                    ResourceSet<MediaResource> media = MediaResource.Read(
-                            pathMessageSid: request.SmsSid,
-                            limit: numMedia
-                        );
-
-                    foreach (MediaResource record in media)
-                    {
-                        mediaSids.Add(record.Sid);
-                    }
-                    foreach (String sid in mediaSids)
-                    {
-                        MediaResource.Delete(
-                            pathMessageSid: request.SmsSid,
-                            pathSid: sid
-                        );
-                    }
-                }
-                MessageResource.Delete(pathSid: request.SmsSid);
+                
             }
             catch (Exception ex)
             {
@@ -217,22 +193,6 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             return request;
         }
 
-        private byte[] GetData(string url)
-        {
-            Byte[] messageBytes;
-
-            using (var client = new HttpClient())
-            {
-                var response = client.GetAsync(url).Result;
-                var httpStream = response.Content.ReadAsStream();
-
-                using (BinaryReader br = new BinaryReader(httpStream))
-                {
-                    messageBytes = br.ReadBytes((Int32)httpStream.Length);
-                }
-            }
-            return messageBytes;
-        }
 
         private string GetFileName(string url)
         {
@@ -248,6 +208,37 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             }
 
             return fileName;
+        }
+
+        [HttpPost, Route("[controller]/CleanUpIncomingMessage")]
+        public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
+        {
+            String? authToken = _configureService.GetValue("Twilio:AuthToken");
+            String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
+
+            TwilioClient.Init(accountSid, authToken);
+
+            if (sMSMessage.attachmentUrls != null && sMSMessage.attachmentUrls.Count > 0)
+            {
+                List<String> mediaSids = new List<String>();
+                ResourceSet<MediaResource> media = MediaResource.Read(
+                        pathMessageSid: sMSMessage.messageID,
+                        limit: sMSMessage.attachmentUrls.Count
+                    );
+
+                foreach (MediaResource record in media)
+                {
+                    mediaSids.Add(record.Sid);
+                }
+                foreach (String sid in mediaSids)
+                {
+                    MediaResource.Delete(
+                        pathMessageSid: sMSMessage.messageID,
+                        pathSid: sid
+                    );
+                }
+            }
+            MessageResource.Delete(pathSid: sMSMessage.messageID);
         }
 
         [HttpPost, Route("[controller]/sms_status_callback")]
@@ -346,6 +337,6 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
                 @"MIME\Database\Content Type\" + mimeType, false);
             var ext = key?.GetValue("Extension", null)?.ToString();
             return ext ?? "application/octet-stream";
-        }
+        }        
     }
 }

@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -7,7 +7,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Operator
     public partial class EditOperator
     {
         [Inject]
-        private CommunicationService CommunicationService { get; set; }
+        private ICommunicationService CommunicationService { get; set; }
 
         [Inject]
         private NavigationManager NavManager { get; set; }

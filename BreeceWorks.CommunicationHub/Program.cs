@@ -13,10 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddScoped<CommunicationService>();
 builder.Services.AddScoped<IDispatcher, BreeceWorks.CommunicationHub.Dispatcher.Implementation.Dispatcher>();
 builder.Services.AddScoped<IConfigureService, ConfigureService>(); 
 builder.Services.AddScoped<ITranslatorService, TranslatorService>();
+builder.Services.AddScoped<ICommunicationService, CommunicationService>();
 
 
 
@@ -28,6 +28,7 @@ builder.Services.AddDbContext<ConfigurationDbContext>(options =>
 });
 
 builder.Services.AddHttpClient<Dispatcher>();
+builder.Services.AddHttpClient<CommunicationService>();
 
 var app = builder.Build();
 

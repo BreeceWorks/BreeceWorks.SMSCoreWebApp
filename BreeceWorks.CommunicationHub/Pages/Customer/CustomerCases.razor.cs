@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -8,7 +8,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Customer
     public partial class CustomerCases
     {
         [Inject]
-        private CommunicationService CommunicationService
+        private ICommunicationService CommunicationService
         {
             get;
             set;

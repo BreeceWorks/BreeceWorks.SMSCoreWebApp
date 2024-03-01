@@ -1,19 +1,34 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using BreeceWorks.CommunicationHub.Dispatcher.Contracts;
 using BreeceWorks.CommunicationHub.Dispatcher.Proxies;
+using BreeceWorks.Shared;
 using BreeceWorks.Shared.CaseObjects;
+using BreeceWorks.Shared.Services;
+using System.Net.Http;
 
-namespace BreeceWorks.CommunicationHub.Data
+namespace BreeceWorks.CommunicationHub.Data.Implementation
 {
-    public class CommunicationService
+    public class CommunicationService: ICommunicationService
     {
         private IDispatcher _dispatcher { get; set; }
         private readonly ITranslatorService _translatorService;
+        private readonly IConfigureService _configureService;
+        private readonly HttpClient _httpClient;
 
-        public CommunicationService(IDispatcher dispatcher, ITranslatorService translatorService)
+
+
+        public CommunicationService(IDispatcher dispatcher, ITranslatorService translatorService, IConfigureService configureService, HttpClient httpClient)
         {
             _dispatcher = dispatcher;
             _translatorService = translatorService;
+            _configureService = configureService;
+            _httpClient = httpClient;
+            String? httpClientBaseAddress = _configureService.GetValue("BreeceWorks.SMSCoreWebApi");
+            if (!String.IsNullOrEmpty(httpClientBaseAddress) )
+            {
+                _httpClient.BaseAddress = new Uri(httpClientBaseAddress);
+            }
+
         }
         public async Task<BreeceWorks.Shared.CaseObjects.Users> GetAllUsers()
         {
@@ -138,6 +153,22 @@ namespace BreeceWorks.CommunicationHub.Data
             };
             Dispatcher.Proxies.Operator operatorResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Operator, ApiClient>(x => x.OperatorsPatchAsync(curOperator.Id.Value, operatorUpdateRqst));
             return _translatorService.TranslateToModel(operatorResponse);
+        }
+
+        public async Task<String> UploadAttachment(MultipartFormDataContent content)
+        {
+            String NewFileURL = String.Empty;
+            HttpResponseMessage httpResponse;
+            httpResponse = await _httpClient.PostAsync(Constants.URLTemplates.AttachmentUploadURL, content);
+            NewFileURL = await httpResponse.Content.ReadAsStringAsync();
+            return NewFileURL;
+        }
+
+        public async Task<BreeceWorks.Shared.SMS.SMSIncomingeMessage> SendMessage(BreeceWorks.Shared.SMS.SMSOutgoingCommunication sMSMessage)
+        {
+            Dispatcher.Proxies.SMSIncomingeMessage messageResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.SMSIncomingeMessage, ActionsClient>(x => x.SendMessageAsync(_translatorService.TranslateToProxy(sMSMessage)));
+            return _translatorService.TranslateToModel(messageResponse);
+
         }
     }
 }
