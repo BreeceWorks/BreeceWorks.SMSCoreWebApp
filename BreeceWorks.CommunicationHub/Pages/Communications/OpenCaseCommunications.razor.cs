@@ -1,17 +1,27 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
+using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Enums;
 using BreeceWorks.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.JSInterop;
-using Microsoft.VisualBasic.FileIO;
+using System.Net.Http.Headers;
+using System.Reflection;
 using static BreeceWorks.Shared.Constants;
 
 namespace BreeceWorks.CommunicationHub.Pages.Communications
 {
     public partial class OpenCaseCommunications
     {
+        private HubConnection? hubConnection;
+        private string? sender;
+        private string? recipient;
+        private string? messageInput;
+
+
         private BreeceWorks.Shared.CaseObjects.CaseTranscript? caseTranscript { get; set; }
         private String? SMSCoreWebApi { get; set; }
         private String? curMessageText {  get; set; }
@@ -45,6 +55,8 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
 
         protected override async Task OnInitializedAsync()
         {
+            await SetUpSignalRHub();
+
             SMSCoreWebApi = ConfigureService.GetValue("BreeceWorks.SMSCoreWebApi");
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
             var queryStrings = QueryHelpers.ParseQuery(uri.Query);
@@ -63,6 +75,33 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
 
         }
 
+        private async Task SetUpSignalRHub()
+        {
+            String? smsSimulatorURL = ConfigureService.GetValue("BreeceWorks.CommunicationWebApi");
+            String? webApiKey = ConfigureService.GetValue("CommunicationWebApiKey");
+
+            if (!String.IsNullOrEmpty(smsSimulatorURL) && !String.IsNullOrEmpty(webApiKey))
+            {
+
+                hubConnection = new HubConnectionBuilder()
+                .WithUrl(smsSimulatorURL + "/communicationhub", (opts) =>
+                {
+                    opts.Headers.Add(SystemConstants.Headers.XAPIKEY, webApiKey);
+                })
+                .Build();
+
+                hubConnection.On<CaseMessage>("ReceiveMessage", (caseMessage) =>
+                {
+                    if (caseTranscript != null && caseTranscript.CaseData != null && caseTranscript.CaseData.Id == caseMessage.CaseId) 
+                    {
+                        caseTranscript.Messages.Add(caseMessage);
+                        GoToBottomOfListAsync();
+                    }                    
+                });
+                await hubConnection.StartAsync();
+            }
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             while (AfterRenderAsyncJobs.Any())
@@ -79,6 +118,11 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
             StateHasChanged();
         }
 
+        private void GoToBottomOfListAsync()
+        {
+            AfterRenderAsyncJobs.Add(ScrollToBottomOfList);
+            InvokeAsync(StateHasChanged);
+        }
         private async Task ScrollToBottomOfList()
         {
             await JsRuntime.InvokeVoidAsync("EndOfList");
@@ -110,6 +154,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
                 curMessageText = String.Empty;
                 GoToBottomOfList();
             }
+            StateHasChanged();
         }
 
         public async Task FileUploaded(InputFileChangeEventArgs e)
@@ -146,5 +191,35 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
             }
         }
 
+        public async ValueTask DisposeAsync()
+        {
+            if (hubConnection is not null)
+            {
+                await hubConnection.DisposeAsync();
+            }
+        }
+    }
+
+    public class Conversation
+    {
+        public Conversation()
+        {
+            Messages = new List<Message>();
+        }
+        public String FirstParty { get; set; }
+        public String SecondParty { get; set; }
+        public List<Message> Messages { get; set; }
+    }
+
+    public class Message
+    {
+        public Message()
+        {
+            AttachmentURLs = new List<String>();
+        }
+        public String To { get; set; }
+        public String From { get; set; }
+        public String MessageContent { get; set; }
+        public List<String> AttachmentURLs { get; set; }
     }
 }

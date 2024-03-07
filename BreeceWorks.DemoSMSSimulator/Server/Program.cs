@@ -1,7 +1,9 @@
 using BreeceWorks.DemoSMSSimulator.Server.Controllers;
 using BreeceWorks.DemoSMSSimulator.Server.Hubs;
+using BreeceWorks.Shared.CustomAuthorization;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +13,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+builder.Services.AddAuthentication().AddCookie();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomHubAuthorizatioPolicy", policy =>
+    {
+        policy.Requirements.Add(new CustomAuthorizationRequirement());
+    });
+});
 builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(opts =>
 {
@@ -54,7 +66,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapHub<ChatHub>("/chathub");

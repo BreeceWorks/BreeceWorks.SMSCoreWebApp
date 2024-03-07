@@ -1,16 +1,16 @@
 using BreeceWorks.CommunicationWebApi.Adapters.Implementations;
 using BreeceWorks.CommunicationWebApi.Adapters.Interfaces;
+using BreeceWorks.CommunicationWebApi.Hubs;
+using BreeceWorks.CommunicationWebApi.Security;
 using BreeceWorks.CommunicationWebApi.Services.Implementations;
 using BreeceWorks.CommunicationWebApi.Services.Interfaces;
+using BreeceWorks.Shared.CustomAuthorization;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-using AutoMapper;
-using BreeceWorks.CommunicationWebApi;
 using System.Reflection;
-using BreeceWorks.CommunicationWebApi.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +78,18 @@ builder.Services.AddDbContext<CommunicationDbContext>(options =>
 
 builder.Services.AddHttpClient<SMSAdapter>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+builder.Services.AddAuthentication().AddCookie();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomHubAuthorizatioPolicy", policy =>
+    {
+        policy.Requirements.Add(new CustomAuthorizationRequirement());
+    });
+});
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -91,5 +103,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ApiKeyMiddleware>();
 app.MapControllers();
+app.MapHub<CommunicationHub>("/communicationhub");
 
 app.Run();

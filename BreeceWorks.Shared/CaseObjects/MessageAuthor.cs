@@ -11,7 +11,7 @@ namespace BreeceWorks.Shared.CaseObjects
     {
         private string _id;
         private MessageAuthorRole? _role;
-        private MessageAuthorProfile _profile;
+        private MessageAuthorProfile? _profile;
 
         public string Id
         {
@@ -39,7 +39,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public MessageAuthorProfile Profile
+        public MessageAuthorProfile? Profile
         {
             get { return _profile; }
 

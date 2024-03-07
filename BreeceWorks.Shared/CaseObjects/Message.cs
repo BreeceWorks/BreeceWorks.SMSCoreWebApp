@@ -11,17 +11,17 @@ namespace BreeceWorks.Shared.CaseObjects
     public class Message
     {
         private string _id;
-        private string _sMSId;
+        private string? _sMSId;
         private MessageType? _type;
         private MessageFormatting? _formatting;
         private string _data;
         private string _status;
         private MessageChannelSource? _channelSource;
-        private MessageAuthor _author;
+        private MessageAuthor? _author;
         private System.DateTime? _createdAt;
         private bool? _needsAttention;
         private bool? _needsAction;
-        private System.Collections.Generic.List<MessageAttachment> _messageAttachments;
+        private List<MessageAttachment>? _messageAttachments;
 
         public string Id
         {
@@ -36,7 +36,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public string SMSId
+        public string? SMSId
         {
             get { return _sMSId; }
 
@@ -114,7 +114,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public MessageAuthor Author
+        public MessageAuthor? Author
         {
             get { return _author; }
 
@@ -166,7 +166,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public System.Collections.Generic.List<MessageAttachment> MessageAttachments
+        public List<MessageAttachment>? MessageAttachments
         {
             get { return _messageAttachments; }
 

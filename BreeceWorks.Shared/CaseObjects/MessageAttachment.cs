@@ -9,11 +9,11 @@ namespace BreeceWorks.Shared.CaseObjects
     public partial class MessageAttachment
     {
         private System.Guid? _id;
-        private string _sourceUrl;
-        private string _name;
-        private string _extension;
-        private string _contentType;
-        private byte[] _data;
+        private string? _sourceUrl;
+        private string? _name;
+        private string? _extension;
+        private string? _contentType;
+        private byte[]? _data;
 
         public System.Guid? Id
         {
@@ -28,7 +28,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public string SourceUrl
+        public string? SourceUrl
         {
             get { return _sourceUrl; }
 
@@ -41,7 +41,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public string Name
+        public string? Name
         {
             get { return _name; }
 
@@ -54,7 +54,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public string Extension
+        public string? Extension
         {
             get { return _extension; }
 
@@ -67,7 +67,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public string ContentType
+        public string? ContentType
         {
             get { return _contentType; }
 
@@ -80,7 +80,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public byte[] Data
+        public byte[]? Data
         {
             get { return _data; }
 

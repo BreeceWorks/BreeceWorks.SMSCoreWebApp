@@ -1,15 +1,18 @@
 ﻿using BreeceWorks.CommunicationWebApi.Adapters.Interfaces;
 using BreeceWorks.CommunicationWebApi.Controllers;
+using BreeceWorks.CommunicationWebApi.Hubs;
 using BreeceWorks.CommunicationWebApi.Objects;
 using BreeceWorks.CommunicationWebApi.RequestObjects;
 using BreeceWorks.CommunicationWebApi.ResponseObjects;
 using BreeceWorks.CommunicationWebApi.Services.Interfaces;
 using BreeceWorks.Shared;
+using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Entities;
 using BreeceWorks.Shared.Enums;
 using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -21,18 +24,20 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
         private readonly IOperatorService _operatorService;
         private readonly IConfigureService _configureService;
         private readonly ITranslatorService _translatorService;
+        private IHubContext<CommunicationHub> _hubContext { get; set; }
 
         private readonly ISMSAdapter _adapter;
 
 
         public MessagingService(CommunicationDbContext context, ISMSAdapter sMSAdapter, 
-            IOperatorService operatorService, ITranslatorService translatorService, IConfigureService configureService)
+            IOperatorService operatorService, ITranslatorService translatorService, IConfigureService configureService, IHubContext<CommunicationHub> hubcontext)
         {
             _context = context;
             _adapter = sMSAdapter;
             _operatorService = operatorService;
             _translatorService = translatorService;
             _configureService = configureService;
+            _hubContext = hubcontext;
         }
         public CompanyPhoneNumber GetNewCompanyNumberForCustomer(Objects.Customer customer)
         {
@@ -63,8 +68,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 messageDto.messageTemplate = messageTemplateDto;
                 if (messageTemplateDto == null)
                 {
-                    templateMessageResponse.errors = new Error[] {
-                        new Error()
+                    templateMessageResponse.errors = new ResponseObjects.Error[] {
+                        new ResponseObjects.Error()
                         {
                             code = Constants.ErrorMessages.TemplateNotFound,
                             category = "NotFound",
@@ -109,7 +114,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 }
                 caseDto.Messages.Add(messageDto);
                 _context.SaveChanges();
-
+                BroadcastNewMessage(caseDto.Id, messageDto);
             }
             catch (Exception ex)
             {
@@ -185,8 +190,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
         {
             if (sMSResponseMessage.errorMessage == Constants.ErrorMessages.PhoneIsLandLine)
             {
-                templateMessageResponse.errors = new Error[] {
-                            new Error()
+                templateMessageResponse.errors = new ResponseObjects.Error[] {
+                            new ResponseObjects.Error()
                             {
                                 code = Constants.ErrorMessages.PhoneIsLandLine,
                                 category = "DataIntegrityError",
@@ -201,8 +206,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             else if (sMSResponseMessage.errorMessage == Constants.ErrorMessages.PhoneIsVoip)
             {
-                templateMessageResponse.errors = new Error[] {
-                            new Error()
+                templateMessageResponse.errors = new ResponseObjects.Error[] {
+                            new ResponseObjects.Error()
                             {
                                 code = Constants.ErrorMessages.PhoneIsVoip,
                                 category = "DataIntegrityError",
@@ -217,8 +222,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             else if (!String.IsNullOrEmpty(sMSResponseMessage.errorMessage))
             {
-                templateMessageResponse.errors = new Error[] {
-                            new Error()
+                templateMessageResponse.errors = new ResponseObjects.Error[] {
+                            new ResponseObjects.Error()
                             {
                                 code = sMSResponseMessage.errorMessage,
                                 category = "DataIntegrityError",
@@ -300,6 +305,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
                     caseDto.Messages.Add(messageDto);
                     _context.SaveChanges();
+                    BroadcastNewMessage(caseDto.Id, messageDto);
 
                     HandleOptInOut(caseDto, sMSMessage);
                 }
@@ -490,7 +496,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 }
                 caseDto.Messages.Add(messageDto);
                 _context.SaveChanges();
-
+                BroadcastNewMessage(caseDto.Id, messageDto);
             }
             catch (Exception ex)
             {
@@ -505,6 +511,13 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
         private string GetAttachmentURL(Guid id)
         {
             return _configureService.GetValue("BreeceWorks.SMSCoreWebApi") + String.Format(Constants.URLTemplates.AttachmentDownloadURL, id.ToString());
+        }
+
+        private async void BroadcastNewMessage(Guid id, MessageDto messageDto)
+        {
+            CaseMessage caseMessage = _translatorService.TranslateToModel(messageDto);
+            caseMessage.CaseId = id;
+            await this._hubContext.Clients.All.SendAsync("ReceiveMessage", caseMessage);
         }
     }
 }

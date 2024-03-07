@@ -4,6 +4,7 @@ using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.IControllers;
 using BreeceWorks.SMSCoreWebApi.Objects;
 using BreeceWorks.SMSCoreWebApi.Validation;
+using IO.ClickSend.ClickSend.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 using System.Text.Json;
@@ -259,6 +260,30 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
                     String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
 
                     TwilioClient.Init(accountSid, authToken);
+
+                    try
+                    {
+                        MessageResource message = MessageResource.Fetch(pathSid: request.SmsSid);
+                        List<String> mediaSids = new List<String>();
+                        ResourceSet<MediaResource> media = MediaResource.Read(
+                                pathMessageSid: message.Sid,
+                                limit: long.Parse(message.NumMedia)
+                            );
+
+                        foreach (MediaResource record in media)
+                        {
+                            mediaSids.Add(record.Sid);
+                        }
+                        foreach (String sid in mediaSids)
+                        {
+                            MediaResource.Delete(
+                                pathMessageSid: message.Sid,
+                                pathSid: sid
+                            );
+                        }
+                    }
+                    catch { }
+
                     MessageResource.Delete(pathSid: request.SmsSid);
                 }
             }
