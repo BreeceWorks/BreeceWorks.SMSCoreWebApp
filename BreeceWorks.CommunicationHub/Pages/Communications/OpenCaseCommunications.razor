@@ -1,4 +1,6 @@
-﻿@page "/opencasecommunications"
+﻿@using BreeceWorks.CommunicationHub.Pages.Components;
+
+@page "/opencasecommunications"
 
 <h3>Case Communications</h3>
 <script type="text/javascript">
@@ -9,7 +11,23 @@
     }
 </script>
 <div>
-    <button @onclick="GoToBottomOfList">Go to bottom of list</button>
+    <table>
+        <tr>
+            <td>
+                <table>
+                    <tr><td>Select agent to operate as.  </td></tr>
+                    <tr><td>This is just for the beta demo.</td></tr>
+                    <tr><td>In a release version, the user would be required to login and this would determine who they are operating as.</td></tr>
+                    <tr><td>If the case has been assigned to an agent, then that agent will be able to send messages to the customer</td></tr>
+                    <tr><td><OperatorSelection @bind-Value="AssignOperatorID" /></td></tr>
+                </table>
+            </td>
+            <td>
+                <button @onclick="GoToBottomOfList">Select</button>
+            </td>
+
+        </tr>
+    </table>
 </div>
 @if (caseTranscript == null)
 {
@@ -111,7 +129,7 @@ else
                                                                     <td></td>
                                                                     <td><b>Source: </b>@message.ChannelSource   </td>
                                                                     <td> </td>
-                                                                    <td><b>Status: </b>@message.Status</td>
+                                                                    <td><b>Status: </b><div style="color: @GetMessageStatusColor(message.Status)">@message.Status</div></td>
                                                                     <td></td>
                                                                     <td><b>Created At: </b>@message.CreatedAt</td>
                                                                 </tr>
@@ -206,7 +224,7 @@ else
                     </tr>
                     <tr>
                         <td>
-                            <table>
+                            <table style="visibility: @SendMessageVisibility();">
                                 <tr>
                                     <td>
                                         <label>Message: </label><InputText @bind-Value="curMessageText" />
@@ -228,6 +246,5 @@ else
 
             </td>
         </tr>
-
     </table>
 }

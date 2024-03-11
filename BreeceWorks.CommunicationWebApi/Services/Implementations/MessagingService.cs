@@ -62,6 +62,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             };
 
 
+
             try
             {
                 MessageTemplateDto? messageTemplateDto = _context.MessageTemplates.Include(t => t.TemplateValues).Where(t => t.TemplateId == templateId).FirstOrDefault();
@@ -81,6 +82,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                             requestId = Guid.Parse(messageDto.id),
                         }
                     };
+                    return templateMessageResponse;
                 }
                 sMSRequest.message = messageTemplateDto.TemplateText;
 
@@ -96,7 +98,22 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
                 DetermineSource(templatedSMSRequest.source, messageDto, caseDto);
 
-                SMSIncomingeMessage sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
+                SMSIncomingeMessage? sMSResponseMessage = null;
+                if (CanSendMessage(sMSRequest.toNumber, messageTemplateDto.Name))
+                {
+                    sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
+                }
+                else
+                {
+                    sMSResponseMessage = new SMSIncomingeMessage()
+                    {
+                        attachmentUrls = sMSRequest.attachmentUrls,
+                        fromNumber = sMSRequest.fromNumber,
+                        toNumber = sMSRequest.toNumber,
+                        message = sMSRequest.message,
+                        errorMessage = Constants.ErrorMessages.CustomerNotOptedIn
+                    };
+                }
                 if (sMSResponseMessage != null)
                 {
                     templateMessageResponse.chatId = sMSResponseMessage.messageID;
@@ -480,23 +497,35 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
                 DetermineSource(sMSMessage.source, messageDto, caseDto);
 
-                sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
-                if (sMSResponseMessage != null)
+                if (CanSendMessage(sMSRequest.toNumber))
                 {
-                    messageDto.sMSId = sMSResponseMessage.messageID;
+                    sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
+                    if (sMSResponseMessage != null)
+                    {
+                        messageDto.sMSId = sMSResponseMessage.messageID;
 
-                    if (!String.IsNullOrEmpty(sMSResponseMessage.errorMessage))
-                    {
-                        messageDto.status = sMSResponseMessage.errorMessage;
+                        if (!String.IsNullOrEmpty(sMSResponseMessage.errorMessage))
+                        {
+                            messageDto.status = sMSResponseMessage.errorMessage;
+                        }
+                        if (!String.IsNullOrEmpty(sMSResponseMessage.initialStatus))
+                        {
+                            messageDto.status = sMSResponseMessage.initialStatus;
+                        }
                     }
-                    if (!String.IsNullOrEmpty(sMSResponseMessage.initialStatus))
-                    {
-                        messageDto.status = sMSResponseMessage.initialStatus;
-                    }
+                }
+                else
+                {
+                    sMSResponseMessage.attachmentUrls = sMSRequest.attachmentUrls;
+                    sMSResponseMessage.fromNumber = sMSRequest.fromNumber;
+                    sMSResponseMessage.toNumber = sMSRequest.toNumber;
+                    sMSResponseMessage.message = sMSRequest.message;
+                    sMSResponseMessage.errorMessage = messageDto.status = Constants.ErrorMessages.CustomerNotOptedIn;
                 }
                 caseDto.Messages.Add(messageDto);
                 _context.SaveChanges();
                 BroadcastNewMessage(caseDto.Id, messageDto);
+
             }
             catch (Exception ex)
             {
@@ -518,6 +547,21 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             CaseMessage caseMessage = _translatorService.TranslateToModel(messageDto);
             caseMessage.CaseId = id;
             await this._hubContext.Clients.All.SendAsync("ReceiveMessage", caseMessage);
+        }
+
+        private Boolean CanSendMessage(String mobile, String templateName = null)
+        {
+            CustomerDto? customerDto = _context.Customers
+                .FirstOrDefault(u => u.Mobile == mobile);
+            Boolean canSendMessage = (customerDto != null && customerDto.OptStatus);
+            if (!String.IsNullOrEmpty(templateName) && templateName == Constants.MessageTemplates.Welcome)
+            {
+                if (customerDto != null)
+                {
+                    canSendMessage = true;
+                }
+            }
+            return canSendMessage;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace BreeceWorks.CommunicationHub.Data.Contracts
         BreeceWorks.Shared.CaseObjects.CaseData TranslateToModel(Dispatcher.Proxies.CaseData caseData);
         BreeceWorks.Shared.CaseObjects.LineOfBusiness TranslateToModel(Dispatcher.Proxies.LineOfBusiness lineOfBusiness);
         BreeceWorks.Shared.CaseObjects.Operators TranslateToModel(Dispatcher.Proxies.Operators operators);
-        BreeceWorks.Shared.CaseObjects.Operator TranslateToModel(Dispatcher.Proxies.Operator operator1);
+        BreeceWorks.Shared.CaseObjects.Operator? TranslateToModel(Dispatcher.Proxies.Operator? operator1);
         BreeceWorks.Shared.CaseObjects.Case TranslateToModel(Dispatcher.Proxies.Case curCase);
         BreeceWorks.Shared.CaseObjects.CaseRspses TranslateToModel(Dispatcher.Proxies.CaseRspses caseRspses);
         BreeceWorks.Shared.CaseObjects.ActiveCases TranslateToModel(Dispatcher.Proxies.ActiveCases activeCases);

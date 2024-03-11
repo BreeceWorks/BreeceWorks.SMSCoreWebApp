@@ -16,6 +16,7 @@ namespace BreeceWorks.Shared
             public const String InvalidPhoneNumber = "Invalid phone number";
             public const String ClaimExists = "ClaimExists";
             public const String OperatorsNotFound = "No Operators Were Found.";
+            public const String CustomerNotOptedIn = "The customer has not opted in to receiving messages";
         }
         public static class MessageTemplates
         {

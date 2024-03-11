@@ -7,8 +7,8 @@
         private string _caseType;
         private string _businessName;
         private Customer _customer;
-        private Operator _primaryContact;
-        private Operator _createdBy;
+        private Operator? _primaryContact;
+        private Operator? _createdBy;
         private string _privacy;
         private string _languagePreference;
         private System.Collections.Generic.List<Operator> _secondaryOperators;
@@ -80,7 +80,7 @@
             }
         }
 
-        public Operator PrimaryContact
+        public Operator? PrimaryContact
         {
             get { return _primaryContact; }
 
@@ -93,7 +93,7 @@
             }
         }
 
-        public Operator CreatedBy
+        public Operator? CreatedBy
         {
             get { return _createdBy; }
 

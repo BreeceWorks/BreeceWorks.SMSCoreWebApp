@@ -141,7 +141,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
-        public BreeceWorks.Shared.CaseObjects.Operator TranslateToModel(Dispatcher.Proxies.Operator operator1)
+        public BreeceWorks.Shared.CaseObjects.Operator? TranslateToModel(Dispatcher.Proxies.Operator? operator1)
         {
             if (operator1 == null)
             {

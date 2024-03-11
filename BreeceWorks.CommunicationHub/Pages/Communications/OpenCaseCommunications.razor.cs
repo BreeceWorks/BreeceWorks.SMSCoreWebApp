@@ -1,4 +1,5 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
+using BreeceWorks.Shared;
 using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Enums;
 using BreeceWorks.Shared.Services;
@@ -52,6 +53,25 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
         private NavigationManager NavManager { get; set; }
 
         List<Func<Task>> AfterRenderAsyncJobs = new();
+        private String? AssignOperatorID 
+        { 
+            get{return _assignOperatorID;}
+            set
+            {
+                _assignOperatorID = value;
+                if (value != null && caseTranscript != null && caseTranscript.PrimaryContact != null && caseTranscript.PrimaryContact.Email == AssignOperatorID)
+                {
+                    CanSendMessages = true;
+                }
+                else
+                {
+                    CanSendMessages = false;
+                }
+                StateHasChanged();
+            }
+        }
+        private String? _assignOperatorID { get; set; }
+        private Boolean CanSendMessages {  get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -70,6 +90,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
                     {
                         ErrorMessage = caseTranscript.Errors[0].Detail;
                     }
+                    GoToBottomOfList();
                 }
             }
 
@@ -128,7 +149,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
             await JsRuntime.InvokeVoidAsync("EndOfList");
         }
 
-        private void SendMessage()
+        private async void SendMessage()
         {
             if (!String.IsNullOrEmpty(curMessageText))
             {
@@ -149,7 +170,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
                     sMSOutgoingCommunication.attachmentIDs.Add(curAttachmentID);
                 }
 
-                CommunicationService.SendMessage(sMSOutgoingCommunication);
+                BreeceWorks.Shared.SMS.SMSIncomingeMessage messageResponse = await CommunicationService.SendMessage(sMSOutgoingCommunication);
                 _inputFileId = Guid.NewGuid().ToString();
                 curMessageText = String.Empty;
                 GoToBottomOfList();
@@ -157,6 +178,29 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
             StateHasChanged();
         }
 
+        private String GetMessageStatusColor(String status)
+        {
+            if(!String.IsNullOrEmpty(status) && 
+                (status == Constants.MessageStatus.DELIVERED
+                || status == Constants.MessageStatus.UNDELIVERED
+                || status == Constants.MessageStatus.SENT))
+            {
+                return "black";
+            }
+            return "red";
+        }
+
+        private String SendMessageVisibility()
+        {
+            if (CanSendMessages)
+            {
+                return "visible";
+            }
+            else
+            {
+                return "hidden";
+            }
+        }
         public async Task FileUploaded(InputFileChangeEventArgs e)
         {
             var browserFile = e.File;
