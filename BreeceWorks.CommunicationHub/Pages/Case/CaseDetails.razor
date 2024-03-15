@@ -1,4 +1,5 @@
-﻿@page "/caseDetails"
+﻿@using BreeceWorks.CommunicationHub.Pages.Components;
+@page "/caseDetails"
 
 <h3>Case Details</h3>
 
@@ -10,11 +11,11 @@ else
 {
     @if (curCase.Errors != null && curCase.Errors.Any())
     {
-        <p><em>@curCase.Errors[0].Detail</em></p>
+        <p style="color:red"><em>@curCase.Errors[0].Detail</em></p>
     }
         <table>
             <tr>
-                <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
+            <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
                 <td><button @onclick="@(() => ReassignCase())">Reassign Case</button></td>
                 <td><button @onclick="@(() => UnassignCase())">Unassign Case</button></td>
             </tr>
@@ -103,6 +104,9 @@ else
                 <p>Mobile: @curOperator.PhoneNumber</p>
             }
         }
-    
+    <table>
+        <tr><td><button @onclick="@(() => ReturnToList())">Return To List</button></td></tr>
+    </table>
+
 }
 

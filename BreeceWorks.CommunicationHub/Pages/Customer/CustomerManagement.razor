@@ -11,7 +11,10 @@
     <p><em>Loading...</em></p>
 }
 else
-{
+{ @if (Error != String.Empty)
+    {
+        <p style="color:red"><em>@Error</em></p>
+    }
     <table class="table">
         <thead>
             <tr>

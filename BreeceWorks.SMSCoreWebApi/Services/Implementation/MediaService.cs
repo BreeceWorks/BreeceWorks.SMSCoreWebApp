@@ -35,7 +35,7 @@ namespace BreeceWorks.SMSCoreWebApi.Services.Implementation
 
         
 
-        public void SaveMediaAttachment(MediaAttachment mediaAttachment)
+        public String SaveMediaAttachment(MediaAttachment mediaAttachment)
         {
             MessageAttachmentDto messageAttachmentDto = new MessageAttachmentDto()
             {
@@ -47,6 +47,7 @@ namespace BreeceWorks.SMSCoreWebApi.Services.Implementation
 
             _context.MessageAttachments.Add(messageAttachmentDto);
             _context.SaveChanges();
+            return messageAttachmentDto.id.ToString();
         }
     }
 }

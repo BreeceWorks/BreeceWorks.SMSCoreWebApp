@@ -1,0 +1,44 @@
+﻿@page "/communicationmanagement"
+
+<h3>Communication Management</h3>
+
+@if (allCases == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (allCases.Errors != null && allCases.Errors.Any())
+    {
+        <p style="color:red"><em>@allCases.Errors[0].Detail</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Case State</th>
+                    <th>Case Type</th>
+                    <th>Claim Number</th>
+                    <th>Policy Number</th>
+                    <th>Date Of Loss</th>
+                    <th>Get Case Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customerCase in allCases.Cases)
+                {
+                    <tr>
+                        <td>@customerCase.State</td>
+                        <td>@customerCase.CaseType</td>
+                        <td>@customerCase.CaseData.ClaimNumber</td>
+                        <td>@customerCase.CaseData.PolicyNumber</td>
+                        <td>@customerCase.CaseData.DateOfLoss</td>
+                        <td><button @onclick="@(() => OpenCaseCommunications(customerCase.CaseData.Id.Value))">Open Case Communications</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+}

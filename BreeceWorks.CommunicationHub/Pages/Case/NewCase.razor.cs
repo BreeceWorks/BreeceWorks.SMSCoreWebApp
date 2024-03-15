@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Enums;
 using Microsoft.AspNetCore.Components;
@@ -12,7 +12,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         private String? ErrorMessage { get; set; }
 
         [Inject]
-        private CommunicationService? CommunicationService
+        private ICommunicationService? CommunicationService
         {
             get;
             set;
@@ -21,7 +21,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         [Inject]
         private NavigationManager? NavManager { get; set; }
 
-        public String? AssignOperatorID {get; set; }
+        public String? AssignOperatorID { get; set; }
         public String? PrivacySelection { get; set; }
 
         public String? LanguagePreferenceSelection { get; set; }
@@ -121,7 +121,44 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
             {
                 if (!String.IsNullOrEmpty(caseCreateRqst.CaseType))
                 {
-
+                    if (caseCreateRqst.CaseData != null)
+                    {
+                        if (String.IsNullOrEmpty(caseCreateRqst.CaseData.ClaimNumber))
+                        {
+                            exceptionMessage = "The claimNumber field is required.";
+                        }
+                        if (String.IsNullOrEmpty(caseCreateRqst.CaseData.PolicyNumber))
+                        {
+                            exceptionMessage = "The policyNumber field is required.";
+                        }
+                    }
+                    else
+                    {
+                        exceptionMessage = "Case Data is required";
+                    }
+                    if (caseCreateRqst.Customer != null)
+                    {
+                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.First))
+                        {
+                            exceptionMessage = "Customer First Name field is required.";
+                        }
+                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.Last))
+                        {
+                            exceptionMessage = "Cuatomer Last Name field is required.";
+                        }
+                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.Email))
+                        {
+                            exceptionMessage = "Customer Email field is required.";
+                        }
+                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.Mobile))
+                        {
+                            exceptionMessage = "Customer Mobile field is required.";
+                        }
+                    }
+                    else
+                    {
+                        exceptionMessage = "Customer is required";
+                    }
                 }
                 else
                 {
@@ -133,6 +170,11 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
                 exceptionMessage = "Case Create Request is null";
             }
             return exceptionMessage;
+        }
+
+        protected void Cancel()
+        {
+            NavManager.NavigateTo("/casemanagement");
         }
     }
 }

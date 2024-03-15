@@ -1,4 +1,5 @@
 ﻿using BreeceWorks.CommunicationHub.Data;
+using BreeceWorks.CommunicationHub.Data.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -9,7 +10,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         private BreeceWorks.Shared.CaseObjects.Case? curCase { get; set; }
         
         [Inject]
-        private CommunicationService CommunicationService
+        private ICommunicationService CommunicationService
         {
             get;
             set;
@@ -41,6 +42,10 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         protected void EditCase(Guid? caseId)
         {
             NavManager.NavigateTo(string.Format("/editCase?CaseID={0}", caseId));
+        }
+        protected void ReturnToList()
+        {
+            NavManager.NavigateTo("/casemanagement");
         }
         protected async void ReassignCase()
         {

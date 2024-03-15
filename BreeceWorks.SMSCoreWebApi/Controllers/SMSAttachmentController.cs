@@ -35,7 +35,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 
         [HttpPost]
         [Route("attachment-upload")]
-        public IActionResult Upload([FromForm] IFormFile file)
+        public ActionResult<String> Upload([FromForm] IFormFile file)
         {
             Byte[] messageBytes = null;
             String name = GetName(file.FileName);
@@ -45,8 +45,8 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             {
                 messageBytes = br.ReadBytes((Int32)file.Length);
             }
-            _mediaService.SaveMediaAttachment(new MediaAttachment() { data = messageBytes, extension = extention, name = name });
-            return Ok();
+            String attachmentId = _mediaService.SaveMediaAttachment(new MediaAttachment() { data = messageBytes, extension = extention, name = name });
+            return attachmentId;
         }
 
         private string GetExtension(string fileName)

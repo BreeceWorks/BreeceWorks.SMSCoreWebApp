@@ -1,5 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
-using BreeceWorks.CommunicationHub.Dispatcher.Proxies;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -9,7 +8,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Customer
     public partial class CustomerCases
     {
         [Inject]
-        private CommunicationService CommunicationService
+        private ICommunicationService CommunicationService
         {
             get;
             set;
@@ -18,7 +17,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Customer
         [Inject]
         private NavigationManager NavManager { get; set; }
 
-        private ActiveCases? activeCases;
+        private BreeceWorks.Shared.CaseObjects.ActiveCases? activeCases;
         protected override async Task OnInitializedAsync()
         {
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);

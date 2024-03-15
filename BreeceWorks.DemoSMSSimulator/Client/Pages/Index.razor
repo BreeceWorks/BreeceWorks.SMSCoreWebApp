@@ -49,10 +49,31 @@
             </tr>
             <tr>
                 <td>
-                    @foreach (var message in conv.Messages)
-                    {
-                        <li>from: @message.From  to: @message.To  message: @message.MessageContent</li>
-                    }</td>
+                    <ul>
+                        @foreach (var message in conv.Messages)
+                        {
+                            <li>
+                                <table>
+                                    <tr>
+                                        <td>from: @message.From  to: @message.To  message: @message.MessageContent</td>
+                                    </tr>
+                                    <tr>
+                                        @foreach (String url in message.AttachmentURLs)
+                                        {
+                                            <td>Attachment: <a href="@url" target="_blank"><img id="ItemPreview" height="200" width="200" src="@url"></a></td>
+                                        }
+                                    </tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                </table>
+                            </li>
+                        }
+                    </ul>
+                </td>
             </tr>
         </table>
     }
@@ -80,7 +101,15 @@
             if (curConversation == null)
             {
                 curConversation = new Conversation() { FirstParty = from, SecondParty = to };
-                curConversation.Messages.Add(new Message() { From = from, To = to, MessageContent = message });
+                List<String> urls = new List<String>();
+                if (attachmentUrls != null && attachmentUrls.Count > 0)
+                {
+                    foreach (SMSAttachment attachment in attachmentUrls)
+                    {
+                        urls.Add(attachment.url);
+                    }
+                }
+                curConversation.Messages.Add(new Message() { From = from, To = to, MessageContent = message, AttachmentURLs = urls });
                 conversations.Add(curConversation);
                 if (!String.IsNullOrEmpty(curConversation.SecondParty))
                 {
@@ -101,7 +130,15 @@
             }
             else
             {
-                curConversation.Messages.Add(new Message() { From = from, To = to, MessageContent = message });
+                List<String> urls = new List<String>();
+                if (attachmentUrls != null && attachmentUrls.Count > 0)
+                {
+                    foreach (SMSAttachment attachment in attachmentUrls)
+                    {
+                        urls.Add(attachment.url);
+                    }
+                }
+                curConversation.Messages.Add(new Message() { From = from, To = to, MessageContent = message, AttachmentURLs = urls });
             }
 
             StateHasChanged();

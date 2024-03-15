@@ -1,11 +1,13 @@
 ﻿using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using System.Text;
 
 namespace BreeceWorks.DemoSMSSimulator.Server.Hubs
 {
+    [Authorize(Policy = "CustomHubAuthorizatioPolicy")]
     public class ChatHub : Hub
     {
         private readonly IConfigureService _configureService;
