@@ -5,6 +5,8 @@
 
 <h1>Operator Management</h1>
 
+<button @onclick="@(() => CreateOperator())">Create Operator</button>
+
 <p>Gets all currently existing operators</p>
 
 @if (operators == null)
@@ -49,7 +51,6 @@ else
             }
         </tbody>
     </table>
-    <button @onclick="@(() => CreateOperator())">Create Operator</button>
 
 }
 

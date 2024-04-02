@@ -2,6 +2,8 @@
 
 <h3>Case Management</h3>
 
+<button @onclick="@(() => CreateCase())">Open New Case</button>
+
 @if (allCases == null)
 {
     <p><em>Loading...</em></p>
@@ -39,7 +41,6 @@ else
                 }
             </tbody>
         </table>
-        <button @onclick="@(() => CreateCase())">Open New Case</button>
 
     }
 }

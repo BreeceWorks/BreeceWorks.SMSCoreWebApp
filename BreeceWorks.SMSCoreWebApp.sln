@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{1EBC9C15-69F4-4464-9EBE-9E3DB5EF81F7}"
 	ProjectSection(SolutionItems) = preProject
 		Documents\nswag.nswag = Documents\nswag.nswag
+		Documents\ReadMe.docx = Documents\ReadMe.docx
 		Documents\SMSCommunicationDB.sql = Documents\SMSCommunicationDB.sql
 	EndProjectSection
 EndProject
