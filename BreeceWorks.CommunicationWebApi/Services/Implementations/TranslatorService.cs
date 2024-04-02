@@ -608,7 +608,95 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             };
         }
 
+        public Shared.CaseObjects.CaseMessage TranslateToModel(MessageDto messageDto)
+        {
+            if (messageDto == null)
+            {
+                return null;
+            }
+            else
+            {
+                Shared.CaseObjects.CaseMessage caseMessage = new Shared.CaseObjects.CaseMessage()
+                {
+                    CreatedAt = messageDto.createdAt,
+                    NeedsAction = messageDto.needsAction,
+                    Id = messageDto.id,
+                    Data = messageDto.text,
+                    SMSId = messageDto.sMSId,
+                    Author = TranslateToModel(messageDto.author),
+                    MessageAttachments = TranslateToModel(messageDto.messageAttachments),
+                    NeedsAttention = messageDto.needsAttention,
+                    ChannelSource = messageDto.channelSource,
+                    Formatting = messageDto.formatting,
+                    Status = messageDto.status,
+                    Type = messageDto.type,
+                };
+                return caseMessage;
+            }
+        }
 
+        public Shared.CaseObjects.MessageAuthor? TranslateToModel(MessageAuthorDto? messageAuthorDto)
+        {
+            if (messageAuthorDto == null)
+            { return null; }
+            else
+            {
+                Shared.CaseObjects.MessageAuthor messageAuthor = new Shared.CaseObjects.MessageAuthor()
+                {
+                    Id = messageAuthorDto.id,
+                    Profile = GetProfileFromAuthorDto(messageAuthorDto),
+                    Role = messageAuthorDto.role,
+                };
+                return messageAuthor;
+            }
+        }
+
+        private Shared.CaseObjects.MessageAuthorProfile? GetProfileFromAuthorDto(MessageAuthorDto messageAuthorDto)
+        {
+            if (messageAuthorDto == null)
+            {
+                return null;
+            }
+            else
+            {
+                Shared.CaseObjects.MessageAuthorProfile messageAuthorProfile = new Shared.CaseObjects.MessageAuthorProfile()
+                {
+                    FirstName = messageAuthorDto.firstName,
+                    LastName = messageAuthorDto.lastName,
+                };
+                return messageAuthorProfile;
+            }
+        }
+
+        public List<Shared.CaseObjects.MessageAttachment>? TranslateToModel(List<MessageAttachmentDto>? messageAttachments)
+        {
+            if (messageAttachments == null)
+            {
+                return null;
+            }
+            else
+            {
+                List<Shared.CaseObjects.MessageAttachment> messageAttachments1 = new List<Shared.CaseObjects.MessageAttachment>();
+                foreach(MessageAttachmentDto messageAttachmentDto in messageAttachments)
+                {
+                    messageAttachments1.Add(TranslateToModel(messageAttachmentDto));
+                }
+                return messageAttachments1;
+            }
+        }
+
+        public Shared.CaseObjects.MessageAttachment TranslateToModel(MessageAttachmentDto messageAttachmentDto)
+        {
+            return new Shared.CaseObjects.MessageAttachment() 
+            {
+                Id = messageAttachmentDto.id,
+                ContentType = HelperMethods.GetMimeTypeByWindowsRegistry(messageAttachmentDto.extension),
+                Data = messageAttachmentDto.data,
+                Extension = messageAttachmentDto.extension,
+                Name = messageAttachmentDto.name,
+                SourceUrl = messageAttachmentDto.sourceUrl
+            };
+        }
         #endregion
 
         #region privare

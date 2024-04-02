@@ -5,6 +5,6 @@ namespace BreeceWorks.SMSCoreWebApi.Services.Interface
     public interface IMediaService
     {
         MediaAttachment? GetMediaAttachment(String attachmentID);
-        void SaveMediaAttachment(MediaAttachment mediaAttachment);
+        String SaveMediaAttachment(MediaAttachment mediaAttachment);
     }
 }

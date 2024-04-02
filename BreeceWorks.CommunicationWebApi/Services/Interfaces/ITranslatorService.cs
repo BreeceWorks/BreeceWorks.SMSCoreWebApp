@@ -51,8 +51,10 @@ namespace BreeceWorks.CommunicationWebApi.Services.Interfaces
         ResponseObjects.Case TranslateToRspse(Objects.Case caseObject);
         ResponseObjects.Customer? TranslateToRspse(Objects.Customer? customer);
         ResponseObjects.CaseTranscript TranslateToRspse(Objects.CaseTranscript caseObject);
-
-
+        Shared.CaseObjects.CaseMessage TranslateToModel(MessageDto messageDto);
+        Shared.CaseObjects.MessageAuthor? TranslateToModel(MessageAuthorDto? messageAuthorDto);
+        List<Shared.CaseObjects.MessageAttachment>? TranslateToModel(List<MessageAttachmentDto>? messageAttachments);
+        Shared.CaseObjects.MessageAttachment TranslateToModel(MessageAttachmentDto messageAttachment);
         #endregion
 
 

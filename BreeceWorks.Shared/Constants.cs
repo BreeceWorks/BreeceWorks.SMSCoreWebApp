@@ -16,6 +16,7 @@ namespace BreeceWorks.Shared
             public const String InvalidPhoneNumber = "Invalid phone number";
             public const String ClaimExists = "ClaimExists";
             public const String OperatorsNotFound = "No Operators Were Found.";
+            public const String CustomerNotOptedIn = "The customer has not opted in to receiving messages";
         }
         public static class MessageTemplates
         {
@@ -58,6 +59,10 @@ namespace BreeceWorks.Shared
             public const String Incoming = "/api/case/actions/incoming-message-webhook";
             public const String StatusCallback = "/api/case/actions/sms_status_callback";
             public const String AttachmentDownloadURL = "/api/SMSAttachment/attachment-download/{0}";
+            public const String AttachmentUploadURL = "/api/SMSAttachment/attachment-upload";
         }
+
+        public const int MAX_FILESIZE = 50000 * 1024; // 50 MB
+
     }
 }

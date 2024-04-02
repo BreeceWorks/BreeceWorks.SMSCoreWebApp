@@ -120,7 +120,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
         public CaseDto? GetCaseTranscript(String caseId)
         {
-            return _context.Cases.Include(c=>c.Customer).Include(c=>c.SecondaryOperators).Include(c=>c.LineOfBusiness).Include(c => c.Messages).Where(c => c.Id.ToString() == caseId).FirstOrDefault();
+            return _context.Cases.Include(c=>c.Customer).Include(c=>c.SecondaryOperators).Include(c=>c.LineOfBusiness).Include(c => c.Messages).ThenInclude(m => m.author).Include(c => c.Messages).ThenInclude(m=>m.messageAttachments).Where(c => c.Id.ToString() == caseId).FirstOrDefault();
         }
 
         public CaseDto UpdateCase(CaseDto caseObject)
@@ -293,11 +293,11 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             if (caseDto.PrimaryContact != null)
             {
-                templatedMessageRequest.source = TemplateMessageSource.assigned.ToString();
+                templatedMessageRequest.source = RequestObjects.TemplateMessageSource.assigned.ToString();
             }
             else
             {
-                templatedMessageRequest.source = TemplateMessageSource.ai.ToString();
+                templatedMessageRequest.source = RequestObjects.TemplateMessageSource.ai.ToString();
             }
             return _messagingService.SendTemplateMessage(templatedMessageRequest, templatedMessageDto.TemplateId);
         }

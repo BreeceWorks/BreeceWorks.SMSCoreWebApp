@@ -13,7 +13,7 @@
         public Boolean isArchived { get;set; }
         public Boolean isActive { get;set; }
         public String  _id { get;set; }
-        public String chatId { get;set; }
+        public String? chatId { get;set; }
         public String? authorId { get;set; }
         public String body { get;set; }
         public String deliveryStatus { get;set; }
