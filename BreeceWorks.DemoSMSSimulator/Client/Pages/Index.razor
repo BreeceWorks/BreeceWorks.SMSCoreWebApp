@@ -43,7 +43,7 @@
 <ul id="messagesList">
     @foreach(var conv in conversations)
     {
-        <table>
+        <table style="border-style:double; border-color: black; border-radius: 25px;">
             <tr>
                 <td>@conv.FirstParty</td><td>  </td><td>@conv.SecondParty</td>
             </tr>
@@ -52,7 +52,7 @@
                     <ul>
                         @foreach (var message in conv.Messages)
                         {
-                            <li>
+                            <li style="border-style:double; border-color: black; border-radius: 25px;">
                                 <table>
                                     <tr>
                                         <td>from: @message.From  to: @message.To  message: @message.MessageContent</td>

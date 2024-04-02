@@ -41,6 +41,24 @@ else
     <table>
         <tr>
             <td>
+                @if (caseTranscript.PrimaryContact != null)
+                {
+                    <h4>Primary Contact</h4>
+                    <p>First Name: @caseTranscript.PrimaryContact.FirstName</p>
+                    <p>Last Name: @caseTranscript.PrimaryContact.LastName</p>
+                    <p>Email: @caseTranscript.PrimaryContact.Email</p>
+                    <p>Mobile: @caseTranscript.PrimaryContact.PhoneNumber</p>
+                }
+                @if (caseTranscript.Customer != null)
+                {
+                    <h4>Customer</h4>
+                    <p>First Name: @caseTranscript.Customer.First</p>
+                    <p>Last Name: @caseTranscript.Customer.Last</p>
+                    <p>Email: @caseTranscript.Customer.Email</p>
+                    <p>Mobile: @caseTranscript.Customer.Mobile</p>
+                    <p>OptStatus: @caseTranscript.Customer.OptStatus</p>
+                    <p>OptStatusDetail: @caseTranscript.Customer.OptStatusDetail</p>
+                }
                 @if (caseTranscript.CaseData != null)
                 {
                     <h4>Case Data</h4>
@@ -68,24 +86,6 @@ else
                 <p>Case Business Name: @caseTranscript.BusinessName</p>
                 <p>Case Privacy: @caseTranscript.Privacy</p>
                 <p>Case Language Preference: @caseTranscript.LanguagePreference</p>
-                @if(caseTranscript.Customer != null)
-                {
-                    <h4>Customer</h4>
-                    <p>First Name: @caseTranscript.Customer.First</p>
-                    <p>Last Name: @caseTranscript.Customer.Last</p>
-                    <p>Email: @caseTranscript.Customer.Email</p>
-                    <p>Mobile: @caseTranscript.Customer.Mobile</p>
-                    <p>OptStatus: @caseTranscript.Customer.OptStatus</p>
-                    <p>OptStatusDetail: @caseTranscript.Customer.OptStatusDetail</p>
-                }
-                @if (caseTranscript.PrimaryContact != null)
-                {
-                    <h4>Primary Contact</h4>
-                    <p>First Name: @caseTranscript.PrimaryContact.FirstName</p>
-                    <p>Last Name: @caseTranscript.PrimaryContact.LastName</p>
-                    <p>Email: @caseTranscript.PrimaryContact.Email</p>
-                    <p>Mobile: @caseTranscript.PrimaryContact.PhoneNumber</p>
-                }
                 @if (caseTranscript.CreatedBy != null)
                 {
                     <h4>Created By</h4>
@@ -115,105 +115,101 @@ else
                                 <ul id="MessageList">
                                     @if (caseTranscript.Messages != null)
                                     {
-                                        foreach (BreeceWorks.Shared.CaseObjects.Message message in caseTranscript.Messages)
+                                        foreach (BreeceWorks.Shared.CaseObjects.Message message in caseTranscript.Messages.ToList())
                                         {
-                                            <li>
+                                            <li style="border-style:double; border-color: black; border-radius: 25px;">
                                                 <table>
                                                     <tr>
-                                                        <td>
+                                                        <td style="width: 80%;">
                                                             <table>
                                                                 <tr>
-                                                                    <td><b>Type: </b>@message.Type   </td>
-                                                                    <td></td>
-                                                                    <td><b>Formatting: </b>@message.Formatting    </td>
-                                                                    <td></td>
-                                                                    <td><b>Source: </b>@message.ChannelSource   </td>
-                                                                    <td> </td>
-                                                                    <td><b>Status: </b><div style="color: @GetMessageStatusColor(message.Status)">@message.Status</div></td>
-                                                                    <td></td>
-                                                                    <td><b>Created At: </b>@message.CreatedAt</td>
+                                                                    <td>
+                                                                        <table>
+                                                                            <tr>
+                                                                                <td><b>Message: </b>@message.Data</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </td>
                                                                 </tr>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                    @if (message.Author != null)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                <table>
-                                                                    <tr>
-                                                                        <td><b>Author Type: </b>@message.Author.Role</td>
-                                                                        <td></td>
-                                                                        <td><b>Name: </b>@message.Author.Profile.FirstName @message.Author.Profile.LastName</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                    <tr>
-                                                        <td>
-                                                            <table>
-                                                                <tr>
-                                                                    <td><b>Message: </b>@message.Data</td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                    @if (message.MessageAttachments != null && message.MessageAttachments.Count > 0)
-                                                    {
-                                                        <tr><td>Attachment(s) Included</td></tr>
-                                                        <tr><td> </td></tr>
-                                                        foreach (BreeceWorks.Shared.CaseObjects.MessageAttachment messageAttachment in message.MessageAttachments)
-                                                        {
-                                                            <tr>
-                                                                <td>
-                                                                    <table>
+                                                                @if (message.MessageAttachments != null && message.MessageAttachments.Count > 0)
+                                                                {
+                                                                    <tr><td>Attachment(s) Included</td></tr>
+                                                                    <tr><td> </td></tr>
+                                                                    foreach (BreeceWorks.Shared.CaseObjects.MessageAttachment messageAttachment in message.MessageAttachments)
+                                                                    {
                                                                         <tr>
                                                                             <td>
-                                                                                Type: @messageAttachment.ContentType
+                                                                                <table>
+                                                                                    @if (messageAttachment.Extension.ToLower() == ".jpg" || messageAttachment.Extension.ToLower() == ".png" || messageAttachment.Extension.ToLower() == ".bmp" || messageAttachment.Extension.ToLower() == ".jpeg")
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <a href="@String.Format("{0}/api/SMSAttachment/attachment-download/{1}", SMSCoreWebApi ,messageAttachment.Id)" target="_blank"><img id="ItemPreview" height="200" width="200" src="@String.Format("{0}/api/SMSAttachment/attachment-download/{1}", SMSCoreWebApi ,messageAttachment.Id)"></a>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                Type: @messageAttachment.ContentType
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <a href="@String.Format("{0}/api/SMSAttachment/attachment-download/{1}", SMSCoreWebApi ,messageAttachment.Id)" target="_blank">@messageAttachment.Name@messageAttachment.Extension</a>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                </table>
                                                                             </td>
                                                                         </tr>
-                                                                        @if (messageAttachment.Extension == ".jpg" || messageAttachment.Extension == ".png" || messageAttachment.Extension == ".bmp")
-                                                                        {
+                                                                    }
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                        <td>
+                                                            <table>
+                                                                @if (message.Author != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table>
+                                                                                <tr>
+                                                                                    <td><b>Name: </b>@message.Author.Profile.FirstName @message.Author.Profile.LastName</td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table>
+                                                                                <tr>
+                                                                                    <td><b>Source: </b>@message.ChannelSource   </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                <tr>
+                                                                    <td><b>Created At: </b>@message.CreatedAt</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <table>
                                                                             <tr>
-                                                                                <td>
-                                                                                    <a href="@String.Format("{0}/api/SMSAttachment/attachment-download/{1}", SMSCoreWebApi ,messageAttachment.Id)" target="_blank"><img id="ItemPreview" height="200" width="200" src="@String.Format("{0}/api/SMSAttachment/attachment-download/{1}", SMSCoreWebApi ,messageAttachment.Id)"></a>
-                                                                                </td>
+                                                                                <td><b>Status: </b></td>
+                                                                                <td><div style="color: @GetMessageStatusColor(message.Status)">@message.Status</div></td>
                                                                             </tr>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <a href="@String.Format("{0}/api/SMSAttachment/attachment-download/{1}", SMSCoreWebApi ,messageAttachment.Id)" target="_blank">@messageAttachment.Name@messageAttachment.Extension</a>
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                    </table>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
-                                                    <tr><td> </td></tr>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>                                                 
                                                 </table>
                                             </li>
                                         }

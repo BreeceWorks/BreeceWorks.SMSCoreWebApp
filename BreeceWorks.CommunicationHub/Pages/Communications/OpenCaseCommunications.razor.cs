@@ -173,6 +173,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
                 BreeceWorks.Shared.SMS.SMSIncomingeMessage messageResponse = await CommunicationService.SendMessage(sMSOutgoingCommunication);
                 _inputFileId = Guid.NewGuid().ToString();
                 curMessageText = String.Empty;
+                curAttachmentID = String.Empty;
                 GoToBottomOfList();
             }
             StateHasChanged();
