@@ -57,6 +57,7 @@ builder.Services.AddScoped<ICaseService, CaseService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 builder.Services.AddScoped<ITranslatorService, TranslatorService>();
+builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<ISMSAdapter, SMSAdapter>();
 
 
