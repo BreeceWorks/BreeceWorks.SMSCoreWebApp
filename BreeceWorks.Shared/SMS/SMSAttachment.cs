@@ -6,6 +6,11 @@ namespace BreeceWorks.Shared.SMS
 {
     public class SMSAttachment
     {
+        public SMSAttachment() 
+        {
+            data = new byte[0];
+        }
+        public Guid id { get; set; }  
         public String url { get; set; } 
         public String name { get; set; }
         public String extension { get; set; }

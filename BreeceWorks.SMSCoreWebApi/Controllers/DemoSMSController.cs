@@ -1,6 +1,7 @@
 ﻿using BreeceWorks.Shared;
 using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
+using BreeceWorks.SMSCoreWebApi.IControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -8,7 +9,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 {
     [Route("api/")]
     [ApiController]
-    public class DemoSMSController : ControllerBase
+    public class DemoSMSController : ControllerBase, ISMSController
     {
 
         private readonly IConfigureService _configureService;
@@ -95,5 +96,10 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             }
         }
 
+        [HttpPost, Route("[controller]/CleanUpIncomingMessage")]
+        public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
+        {
+            
+        }
     }
 }

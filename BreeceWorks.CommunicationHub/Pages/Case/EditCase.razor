@@ -1,0 +1,105 @@
+﻿@using BreeceWorks.CommunicationHub.Pages.Components;
+@page "/editCase"
+
+
+<h3>Edit Case</h3>
+
+@if (curCase == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (!String.IsNullOrEmpty(ErrorMessage))
+    {
+        <p style="color:red"><em>@ErrorMessage</em></p>
+    }
+    <table>
+        <tr>
+            <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
+            <td><button @onclick="@(() => ReassignCase())">Reassign Case</button></td>
+            <td><button @onclick="@(() => UnassignCase())">Unassign Case</button></td>
+        </tr>
+    </table>
+    @if (curCase.CaseData != null)
+    {
+        <h4>Case Data</h4>
+        <p>Case ClaimNumber: <div><InputText @bind-Value="curCase.CaseData.ClaimNumber" /></div></p>
+        <p>Case DateOfLoss: <div><InputText @bind-Value="curCase.CaseData.DateOfLoss" /></div></p>
+        <p>Case PolicyNumber: <div><InputText @bind-Value="curCase.CaseData.PolicyNumber" /></div></p>
+        <p>Case Deductible: <div><input type="number" @bind="@curCase.CaseData.Deductible" /></div></p>
+        <p>Case Brand:  <div><InputText @bind-Value="curCase.CaseData.Brand" /></div></p>
+        @if (curCase.CaseData.LineOfBusiness != null)
+        {
+            <h5>Line of Business</h5>
+            <p>Type: <div><InputText @bind-Value="curCase.CaseData.LineOfBusiness.Type" /></div></p>
+            <p>SubType: <div><InputText @bind-Value="curCase.CaseData.LineOfBusiness.SubType" /></div></p>
+            <td><button @onclick="@(() => RemoveLineOfBusiness())">Remove Line Of Business</button></td>
+        }
+        else if (curCase.CaseData.LineOfBusiness == null)
+        {
+            <td><button @onclick="@(() => AddLineOfBusiness())">Add Line Of Business</button></td>
+        }
+    }
+    <table>
+        <tr>
+            <td><p>Case State: @curCase.State</p></td>
+            @if (curCase.State.ToLower() == "open")
+            {
+                <td><button @onclick="@(() => CloseCase())">Close Case</button></td>
+            }
+            else if (curCase.State.ToLower() == "closed")
+            {
+                <td><button @onclick="@(() => ReopenCase())">Reopen Case</button></td>
+            }
+        </tr>
+    </table>
+    <p>Case Type: <div><CaseTypeSelection @bind-Value="curCase.CaseType" /></div></p>
+    <p>Case Business Name: <div><InputText @bind-Value="curCase.BusinessName" /></div></p>
+    <table>
+        <tr>
+            <td>Privacy: </td>
+            <td><PrivacySelection @bind-Value="PrivacySelection" /></td>
+        </tr>
+        <tr>
+            <td>Language Preference: </td>
+            <td><LanguagePreferenceSelection @bind-Value="LanguagePreferenceSelection" /></td>
+        </tr>
+    </table>
+    @if (curCase.Customer != null)
+    {
+        <h4>Customer</h4>
+        <p>First Name: <div><InputText @bind-Value="curCase.Customer.First" /></div></p>
+        <p>Last Name: <div><InputText @bind-Value="curCase.Customer.Last" /></div></p>
+        <p>Email: <div><InputText @bind-Value="curCase.Customer.Email" /></div></p>
+        <p>Mobile: <div><InputText @bind-Value="curCase.Customer.Mobile" /></div></p>
+    }
+    @if (curCase.PrimaryContact != null)
+    {
+        <h4>Primary Contact</h4>
+        <p>First Name: @curCase.PrimaryContact.FirstName</p>
+        <p>Last Name: @curCase.PrimaryContact.LastName</p>
+        <p>Email: @curCase.PrimaryContact.Email</p>
+        <p>Mobile: @curCase.PrimaryContact.PhoneNumber</p>
+    }
+    @if (curCase.CreatedBy != null)
+    {
+        <h4>Created By</h4>
+        <p>Email: <div><InputText @bind-Value="curCase.CreatedBy.Email" /></div></p>
+    }
+    @if (curCase.SecondaryOperators != null)
+    {
+        @*             @foreach(Operator curOperator in curCase.SecondaryOperators)
+            {
+                <h4>Secondary Operator</h4>
+                <p>First Name: @curOperator.FirstName</p>
+                <p>Last Name: @curOperator.LastName</p>
+                <p>Email: @curOperator.Email</p>
+                <p>Mobile: @curOperator.PhoneNumber</p>
+            }
+ *@             }
+
+    <table>
+        <tr><td><button @onclick="@(() => SaveCase())">Save Changes</button></td><td><button @onclick="@(() => Cancel())">Cancel</button></td></tr>
+    </table>
+}

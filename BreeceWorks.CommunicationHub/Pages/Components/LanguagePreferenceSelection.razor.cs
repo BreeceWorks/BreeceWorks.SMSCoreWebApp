@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationHub.Data;
+﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using Microsoft.AspNetCore.Components;
 
 namespace BreeceWorks.CommunicationHub.Pages.Components
@@ -14,7 +14,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Components
         public String? ErrorMessage { get; set; }
 
         [Inject]
-        public CommunicationService CommunicationService
+        public ICommunicationService CommunicationService
         {
             get;
             set;

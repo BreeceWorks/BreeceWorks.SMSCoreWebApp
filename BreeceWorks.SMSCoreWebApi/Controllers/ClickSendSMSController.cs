@@ -1,6 +1,7 @@
 ﻿using BreeceWorks.Shared;
 using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
+using BreeceWorks.SMSCoreWebApi.IControllers;
 using BreeceWorks.SMSCoreWebApi.Objects;
 using IO.ClickSend.ClickSend.Api;
 using IO.ClickSend.ClickSend.Model;
@@ -16,7 +17,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
     //TODO: This has only been completed enough for me to do some testing.  It needs to finish being fleshed out to be integrated with the BreeceWorks.CommunicationWebApi
     [Route("api/")]
     [ApiController]
-    public class ClickSendSMSController : ControllerBase
+    public class ClickSendSMSController : ControllerBase, ISMSController
     {
         private readonly IConfigureService _configureService;
         private const string SavePath = @"\App_Data\";
@@ -45,7 +46,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 
 
         [HttpPost, Route("[controller]/Outgoing")]
-        public SMSIncomingeMessage Outgoing(SMSOutgoingMessage sMSMessage)
+        public async Task<SMSIncomingeMessage> Outgoing(SMSOutgoingMessage sMSMessage)
         {
             SMSIncomingeMessage sMSResponseMessage = new SMSIncomingeMessage()
             {
@@ -190,7 +191,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             {
                 for (int i = 0; i < messageBlock.Length -1; i++)
                 {
-                    attachmentUrls.Add(new SMSAttachment() { url = messageBlock[i], extension = GetExtension(messageBlock[i]), data = GetData(messageBlock[i]), name = GetFileName(messageBlock[i]) });
+                    attachmentUrls.Add(new SMSAttachment() { url = messageBlock[i], extension = GetExtension(messageBlock[i]), name = GetFileName(messageBlock[i]) });
                     
                 }
             }
@@ -228,22 +229,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             return Ok();
         }
 
-        private byte[] GetData(string url)
-        {
-            Byte[] messageBytes;
-
-            using (var client = new HttpClient())
-            {
-                var response = client.GetAsync(url).Result;
-                var httpStream = response.Content.ReadAsStream();
-
-                using (BinaryReader br = new BinaryReader(httpStream))
-                {
-                    messageBytes = br.ReadBytes((Int32)httpStream.Length);
-                }
-            }
-            return messageBytes;
-        }
+        
 
         private string GetExtension(string url)
         {
@@ -297,20 +283,6 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             return path;
         }
 
-
-        //Save images sent by SMS
-        private async Task SaveImages(int numMedia)
-        {
-            for (var i = 0; i < numMedia; i++)
-            {
-                var mediaUrl = Request.Form[$"MediaUrl{i}"];
-                Trace.WriteLine(mediaUrl);
-                var contentType = Request.Form[$"MediaContentType{i}"];
-
-                var filePath = GetMediaFileName(mediaUrl, contentType);
-                await DownloadUrlToFileAsync(mediaUrl, filePath);
-            }
-        }
 
         private string GetMediaFileName(string mediaUrl,
             string contentType)
@@ -429,7 +401,11 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 
         }
 
-
+        [HttpPost, Route("[controller]/CleanUpIncomingMessage")]
+        public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
+        {
+            
+        }
     }
 
     public class IncomingMessage

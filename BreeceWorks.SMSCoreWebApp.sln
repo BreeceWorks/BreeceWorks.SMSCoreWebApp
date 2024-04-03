@@ -7,14 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.CommunicationWe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.Shared", "BreeceWorks.Shared\BreeceWorks.Shared.csproj", "{403B7E4E-6E3D-42FD-91AE-F22C7DDBC343}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B8519C4-F90C-49B3-941C-BAC14BEC3CD9}"
-	ProjectSection(SolutionItems) = preProject
-		nswag.nswag = nswag.nswag
-		open_case_call_example.json = open_case_call_example.json
-		Setup Instructions.txt = Setup Instructions.txt
-		SMSCommunicationDB.sql = SMSCommunicationDB.sql
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.SMSLibrary", "BreeceWorks.SMSLibrary\BreeceWorks.SMSLibrary.csproj", "{D1774CA2-DB48-4EEE-B5E8-B3E36E1DEAE7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.SMSCoreWebApi", "BreeceWorks.SMSCoreWebApi\BreeceWorks.SMSCoreWebApi.csproj", "{E8506852-0AF7-4B51-8379-646FE309D432}"
@@ -24,6 +16,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.DemoSMSSimulator.Client", "BreeceWorks.DemoSMSSimulator\Client\BreeceWorks.DemoSMSSimulator.Client.csproj", "{B76CA5C5-3AF5-4B2C-888F-6F568A1F81C3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.CommunicationHub", "BreeceWorks.CommunicationHub\BreeceWorks.CommunicationHub.csproj", "{05410C5D-7C98-4AF3-8B33-3B08295AFC1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{1EBC9C15-69F4-4464-9EBE-9E3DB5EF81F7}"
+	ProjectSection(SolutionItems) = preProject
+		Documents\ReadMe.docx = Documents\ReadMe.docx
+		Documents\SMSCommunicationDB.sql = Documents\SMSCommunicationDB.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

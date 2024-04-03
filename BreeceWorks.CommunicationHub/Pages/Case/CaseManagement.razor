@@ -2,6 +2,8 @@
 
 <h3>Case Management</h3>
 
+<button @onclick="@(() => CreateCase())">Open New Case</button>
+
 @if (allCases == null)
 {
     <p><em>Loading...</em></p>
@@ -10,7 +12,7 @@ else
 {
     @if (allCases.Errors != null && allCases.Errors.Any())
     {
-        <p><em>@allCases.Errors[0].Detail</em></p>
+        <p style="color:red"><em>@allCases.Errors[0].Detail</em></p>
     }
     else
     {
@@ -39,7 +41,6 @@ else
                 }
             </tbody>
         </table>
-        <button @onclick="@(() => CreateCase())">Open New Case</button>
 
     }
 }

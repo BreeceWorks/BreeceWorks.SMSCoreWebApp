@@ -445,21 +445,22 @@ namespace BreeceWorks.CommunicationWebApi.Controllers
 
 
         /// <summary>
-        /// Open new case - Opens a new case and triggers the workflow associated with the case type.
+        /// Update case - Performs update to existing case without invoking any workflows. Database update only.
         /// </summary>
-        /// <remarks>Open new case - Opens a new case and triggers the workflow associated with the case type.</remarks>
+        /// <remarks>Updates record associated with a case.</remarks>
         /// <response code="200"></response>
         /// <response code="400"></response>
         [HttpPut]
         [Route("{caseId}")]
         public ActionResult<ResponseObjects.Case> Update([FromRoute] string caseId, [FromBody] CaseUpdateRqst caseUpdateRqst)
         {
-            CaseDto? caseDto = _caseService.GetCase(caseId);
-            Objects.Case caseObject = new Objects.Case();
+            CaseDto? caseDto = null;
             ResponseObjects.Case caseRspse = new ResponseObjects.Case();
+            caseDto = _caseService.UpdateCase(caseId, caseUpdateRqst);
             if (caseDto != null)
             {
-                caseObject = _translatorService.TranslateToObject(caseDto);
+
+                Objects.Case caseObject = _translatorService.TranslateToObject(caseDto);
                 if (caseObject.PrimaryContact != null)
                 {
                     caseObject.PrimaryContact = _translatorService.TranslateToObject(_operatorService.GetOperatorDto(caseObject.PrimaryContact.Id));

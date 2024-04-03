@@ -1,15 +1,18 @@
 ﻿using BreeceWorks.CommunicationWebApi.Adapters.Interfaces;
 using BreeceWorks.CommunicationWebApi.Controllers;
+using BreeceWorks.CommunicationWebApi.Hubs;
 using BreeceWorks.CommunicationWebApi.Objects;
 using BreeceWorks.CommunicationWebApi.RequestObjects;
 using BreeceWorks.CommunicationWebApi.ResponseObjects;
 using BreeceWorks.CommunicationWebApi.Services.Interfaces;
 using BreeceWorks.Shared;
+using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Entities;
 using BreeceWorks.Shared.Enums;
 using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -21,18 +24,20 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
         private readonly IOperatorService _operatorService;
         private readonly IConfigureService _configureService;
         private readonly ITranslatorService _translatorService;
+        private IHubContext<CommunicationHub> _hubContext { get; set; }
 
         private readonly ISMSAdapter _adapter;
 
 
         public MessagingService(CommunicationDbContext context, ISMSAdapter sMSAdapter, 
-            IOperatorService operatorService, ITranslatorService translatorService, IConfigureService configureService)
+            IOperatorService operatorService, ITranslatorService translatorService, IConfigureService configureService, IHubContext<CommunicationHub> hubcontext)
         {
             _context = context;
             _adapter = sMSAdapter;
             _operatorService = operatorService;
             _translatorService = translatorService;
             _configureService = configureService;
+            _hubContext = hubcontext;
         }
         public CompanyPhoneNumber GetNewCompanyNumberForCustomer(Objects.Customer customer)
         {
@@ -57,14 +62,15 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             };
 
 
+
             try
             {
                 MessageTemplateDto? messageTemplateDto = _context.MessageTemplates.Include(t => t.TemplateValues).Where(t => t.TemplateId == templateId).FirstOrDefault();
                 messageDto.messageTemplate = messageTemplateDto;
                 if (messageTemplateDto == null)
                 {
-                    templateMessageResponse.errors = new Error[] {
-                        new Error()
+                    templateMessageResponse.errors = new ResponseObjects.Error[] {
+                        new ResponseObjects.Error()
                         {
                             code = Constants.ErrorMessages.TemplateNotFound,
                             category = "NotFound",
@@ -76,6 +82,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                             requestId = Guid.Parse(messageDto.id),
                         }
                     };
+                    return templateMessageResponse;
                 }
                 sMSRequest.message = messageTemplateDto.TemplateText;
 
@@ -91,7 +98,22 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
                 DetermineSource(templatedSMSRequest.source, messageDto, caseDto);
 
-                SMSIncomingeMessage sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
+                SMSIncomingeMessage? sMSResponseMessage = null;
+                if (CanSendMessage(sMSRequest.toNumber, messageTemplateDto.Name))
+                {
+                    sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
+                }
+                else
+                {
+                    sMSResponseMessage = new SMSIncomingeMessage()
+                    {
+                        attachmentUrls = sMSRequest.attachmentUrls,
+                        fromNumber = sMSRequest.fromNumber,
+                        toNumber = sMSRequest.toNumber,
+                        message = sMSRequest.message,
+                        errorMessage = Constants.ErrorMessages.CustomerNotOptedIn
+                    };
+                }
                 if (sMSResponseMessage != null)
                 {
                     templateMessageResponse.chatId = sMSResponseMessage.messageID;
@@ -109,7 +131,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 }
                 caseDto.Messages.Add(messageDto);
                 _context.SaveChanges();
-
+                BroadcastNewMessage(caseDto.Id, messageDto);
             }
             catch (Exception ex)
             {
@@ -137,7 +159,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 }
                 if (((System.Text.Json.JsonElement)messageSource).ValueKind == System.Text.Json.JsonValueKind.Object)
                 {
-                    source = TemplateMessageSource.email.ToString();
+                    source = RequestObjects.TemplateMessageSource.email.ToString();
                     System.Text.Json.JsonElement responseMessage = (System.Text.Json.JsonElement)messageSource;
                     EmailObject? email = JsonConvert.DeserializeObject<EmailObject>(responseMessage.GetRawText());
                     if (email != null)
@@ -146,7 +168,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                     }
                 }
             }
-            if (source == TemplateMessageSource.assigned.ToString())
+            if (source == RequestObjects.TemplateMessageSource.assigned.ToString())
             {
                 if (caseDto.PrimaryContact != null)
                 {
@@ -165,7 +187,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
 
             }
-            if (source == TemplateMessageSource.email.ToString() && !String.IsNullOrEmpty(sourceEmail))
+            if (source == RequestObjects.TemplateMessageSource.email.ToString() && !String.IsNullOrEmpty(sourceEmail))
             {
                 OperatorDto? assignedContact = _operatorService.GetOperatorDto(sourceEmail);
                 if (assignedContact != null)
@@ -185,8 +207,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
         {
             if (sMSResponseMessage.errorMessage == Constants.ErrorMessages.PhoneIsLandLine)
             {
-                templateMessageResponse.errors = new Error[] {
-                            new Error()
+                templateMessageResponse.errors = new ResponseObjects.Error[] {
+                            new ResponseObjects.Error()
                             {
                                 code = Constants.ErrorMessages.PhoneIsLandLine,
                                 category = "DataIntegrityError",
@@ -201,8 +223,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             else if (sMSResponseMessage.errorMessage == Constants.ErrorMessages.PhoneIsVoip)
             {
-                templateMessageResponse.errors = new Error[] {
-                            new Error()
+                templateMessageResponse.errors = new ResponseObjects.Error[] {
+                            new ResponseObjects.Error()
                             {
                                 code = Constants.ErrorMessages.PhoneIsVoip,
                                 category = "DataIntegrityError",
@@ -217,8 +239,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             else if (!String.IsNullOrEmpty(sMSResponseMessage.errorMessage))
             {
-                templateMessageResponse.errors = new Error[] {
-                            new Error()
+                templateMessageResponse.errors = new ResponseObjects.Error[] {
+                            new ResponseObjects.Error()
                             {
                                 code = sMSResponseMessage.errorMessage,
                                 category = "DataIntegrityError",
@@ -292,6 +314,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                     {
                         foreach (var attachment in messageAttachments)
                         {
+                            attachment.data = GetData(attachment.sourceUrl);
                             _context.MessageAttachments.Add(attachment);
                             messageDto.messageAttachments.Add(attachment);
                         }
@@ -299,6 +322,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
                     caseDto.Messages.Add(messageDto);
                     _context.SaveChanges();
+                    BroadcastNewMessage(caseDto.Id, messageDto);
 
                     HandleOptInOut(caseDto, sMSMessage);
                 }
@@ -308,9 +332,9 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
         }
 
-        private MessageType GetMessageType(List<SMSAttachment> attachmentUrls)
+        private MessageType GetMessageType(List<SMSAttachment>? attachmentUrls)
         {
-            if (attachmentUrls.Count == 0)
+            if (attachmentUrls == null || attachmentUrls.Count == 0)
             {
                 return MessageType.text;
             }
@@ -386,7 +410,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                             caseId = caseDto.Id.ToString(),
                             referenceID = caseDto.ReferenceId,
                             templateValues = new Dictionary<string, string>(),
-                            source = TemplateMessageSource.ai.ToString()
+                            source = RequestObjects.TemplateMessageSource.ai.ToString()
                         };
 
                         SendTemplateMessage(templatedMessageRequest, templatedMessageDto.TemplateId);
@@ -417,6 +441,23 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             return messageTemplateName;
         }
 
+        private byte[] GetData(string url)
+        {
+            Byte[] messageBytes;
+
+            using (var client = new HttpClient())
+            {
+                var response = client.GetAsync(url).Result;
+                var httpStream = response.Content.ReadAsStream();
+
+                using (BinaryReader br = new BinaryReader(httpStream))
+                {
+                    messageBytes = br.ReadBytes((Int32)httpStream.Length);
+                }
+            }
+            return messageBytes;
+        }
+
         public SMSIncomingeMessage SendMessage(SMSOutgoingCommunication sMSMessage)
         {
             SMSOutgoingMessage sMSRequest = new SMSOutgoingMessage() { message = sMSMessage.message };
@@ -434,8 +475,12 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 MessageAttachmentDto? attachment = _context.MessageAttachments.Where(ma => ma.id.ToString() == attachmentID).FirstOrDefault();
                 if (attachment != null)
                 {
+                    if (messageDto.messageAttachments == null)
+                    {
+                        messageDto.messageAttachments = new List<MessageAttachmentDto>();
+                    }
                     messageDto.messageAttachments.Add(attachment);
-                    sMSRequest.attachmentUrls.Add(new SMSAttachment() { data = attachment.data, extension = attachment.extension, name = attachment.name, url = GetAttachmentURL(attachment.id) });
+                    sMSRequest.attachmentUrls.Add(new SMSAttachment() { id = attachment.id, extension = attachment.extension, name = attachment.name, url = GetAttachmentURL(attachment.id) });
                 }
             }
 
@@ -452,22 +497,34 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
                 DetermineSource(sMSMessage.source, messageDto, caseDto);
 
-                sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
-                if (sMSResponseMessage != null)
+                if (CanSendMessage(sMSRequest.toNumber))
                 {
-                    messageDto.sMSId = sMSResponseMessage.messageID;
+                    sMSResponseMessage = _adapter.SendSMS(sMSRequest).Result;
+                    if (sMSResponseMessage != null)
+                    {
+                        messageDto.sMSId = sMSResponseMessage.messageID;
 
-                    if (!String.IsNullOrEmpty(sMSResponseMessage.errorMessage))
-                    {
-                        messageDto.status = sMSResponseMessage.errorMessage;
+                        if (!String.IsNullOrEmpty(sMSResponseMessage.errorMessage))
+                        {
+                            messageDto.status = sMSResponseMessage.errorMessage;
+                        }
+                        if (!String.IsNullOrEmpty(sMSResponseMessage.initialStatus))
+                        {
+                            messageDto.status = sMSResponseMessage.initialStatus;
+                        }
                     }
-                    if (!String.IsNullOrEmpty(sMSResponseMessage.initialStatus))
-                    {
-                        messageDto.status = sMSResponseMessage.initialStatus;
-                    }
+                }
+                else
+                {
+                    sMSResponseMessage.attachmentUrls = sMSRequest.attachmentUrls;
+                    sMSResponseMessage.fromNumber = sMSRequest.fromNumber;
+                    sMSResponseMessage.toNumber = sMSRequest.toNumber;
+                    sMSResponseMessage.message = sMSRequest.message;
+                    sMSResponseMessage.errorMessage = messageDto.status = Constants.ErrorMessages.CustomerNotOptedIn;
                 }
                 caseDto.Messages.Add(messageDto);
                 _context.SaveChanges();
+                BroadcastNewMessage(caseDto.Id, messageDto);
 
             }
             catch (Exception ex)
@@ -483,6 +540,28 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
         private string GetAttachmentURL(Guid id)
         {
             return _configureService.GetValue("BreeceWorks.SMSCoreWebApi") + String.Format(Constants.URLTemplates.AttachmentDownloadURL, id.ToString());
+        }
+
+        private async void BroadcastNewMessage(Guid id, MessageDto messageDto)
+        {
+            CaseMessage caseMessage = _translatorService.TranslateToModel(messageDto);
+            caseMessage.CaseId = id;
+            await this._hubContext.Clients.All.SendAsync("ReceiveMessage", caseMessage);
+        }
+
+        private Boolean CanSendMessage(String mobile, String templateName = null)
+        {
+            CustomerDto? customerDto = _context.Customers
+                .FirstOrDefault(u => u.Mobile == mobile);
+            Boolean canSendMessage = (customerDto != null && customerDto.OptStatus);
+            if (!String.IsNullOrEmpty(templateName) && templateName == Constants.MessageTemplates.Welcome)
+            {
+                if (customerDto != null)
+                {
+                    canSendMessage = true;
+                }
+            }
+            return canSendMessage;
         }
     }
 }
