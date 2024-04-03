@@ -31,23 +31,7 @@ namespace BreeceWorks.SMSCoreWebApi.Services.Implementation
                 };
             }
             return messageAttachment;
-        }
+        }       
 
-        
-
-        public String SaveMediaAttachment(MediaAttachment mediaAttachment)
-        {
-            MessageAttachmentDto messageAttachmentDto = new MessageAttachmentDto()
-            {
-                data = mediaAttachment.data,
-                extension = mediaAttachment.extension,
-                id=Guid.NewGuid(),
-                name=mediaAttachment.name
-            };
-
-            _context.MessageAttachments.Add(messageAttachmentDto);
-            _context.SaveChanges();
-            return messageAttachmentDto.id.ToString();
-        }
     }
 }

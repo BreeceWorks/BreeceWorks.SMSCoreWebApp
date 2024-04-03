@@ -18,7 +18,7 @@
         Task<BreeceWorks.Shared.CaseObjects.Operator?> GetOperatorByID(Guid curOperatorID);
         Task<BreeceWorks.Shared.CaseObjects.Operator?> GetOperatorByEmail(String curOperatorEmail);
         Task<BreeceWorks.Shared.CaseObjects.Operator> UpdateOperator(BreeceWorks.Shared.CaseObjects.Operator curOperator);
-        Task<String> UploadAttachment(MultipartFormDataContent content);
+        Task<String?> UploadAttachment(MultipartFormDataContent content);
         Task<BreeceWorks.Shared.SMS.SMSIncomingeMessage> SendMessage(BreeceWorks.Shared.SMS.SMSOutgoingCommunication sMSMessage);
 
     }

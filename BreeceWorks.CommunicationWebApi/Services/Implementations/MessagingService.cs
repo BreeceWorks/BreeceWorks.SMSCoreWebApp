@@ -480,7 +480,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                         messageDto.messageAttachments = new List<MessageAttachmentDto>();
                     }
                     messageDto.messageAttachments.Add(attachment);
-                    sMSRequest.attachmentUrls.Add(new SMSAttachment() { extension = attachment.extension, name = attachment.name, url = GetAttachmentURL(attachment.id) });
+                    sMSRequest.attachmentUrls.Add(new SMSAttachment() { id = attachment.id, extension = attachment.extension, name = attachment.name, url = GetAttachmentURL(attachment.id) });
                 }
             }
 
