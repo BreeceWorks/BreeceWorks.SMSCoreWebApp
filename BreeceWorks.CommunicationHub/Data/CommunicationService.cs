@@ -1,9 +1,6 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using BreeceWorks.CommunicationHub.Dispatcher.Contracts;
-using BreeceWorks.Shared;
-using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Services;
-using System.Net.Http;
 
 namespace BreeceWorks.CommunicationHub.Data.Implementation
 {

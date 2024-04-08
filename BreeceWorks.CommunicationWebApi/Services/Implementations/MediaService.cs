@@ -1,8 +1,7 @@
-﻿using BreeceWorks.CommunicationWebApi.Objects;
-using BreeceWorks.CommunicationWebApi.Services.Interfaces;
-using BreeceWorks.Shared;
+﻿using BreeceWorks.CommunicationWebApi.Services.Interfaces;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Entities;
+using BreeceWorks.Shared.SMS;
 
 namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 {

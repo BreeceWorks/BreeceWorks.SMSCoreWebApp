@@ -14,6 +14,11 @@
     <table>
         <tr>
             <td>
+                <button @onclick="@(() => OpenCaseDetails(curCaseID))">Case Details</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <table>
                     <tr><td>Select agent to operate as.  </td></tr>
                     <tr><td>This is just for the beta demo.</td></tr>
@@ -22,10 +27,6 @@
                     <tr><td><OperatorSelection @bind-Value="AssignOperatorID" /></td></tr>
                 </table>
             </td>
-            <td>
-                <button @onclick="GoToBottomOfList">Select</button>
-            </td>
-
         </tr>
     </table>
 </div>
@@ -48,62 +49,6 @@ else
                     <p>Last Name: @caseTranscript.PrimaryContact.LastName</p>
                     <p>Email: @caseTranscript.PrimaryContact.Email</p>
                     <p>Mobile: @caseTranscript.PrimaryContact.PhoneNumber</p>
-                }
-                @if (caseTranscript.Customer != null)
-                {
-                    <h4>Customer</h4>
-                    <p>First Name: @caseTranscript.Customer.First</p>
-                    <p>Last Name: @caseTranscript.Customer.Last</p>
-                    <p>Email: @caseTranscript.Customer.Email</p>
-                    <p>Mobile: @caseTranscript.Customer.Mobile</p>
-                    <p>OptStatus: @caseTranscript.Customer.OptStatus</p>
-                    <p>OptStatusDetail: @caseTranscript.Customer.OptStatusDetail</p>
-                }
-                @if (caseTranscript.CaseData != null)
-                {
-                    <h4>Case Data</h4>
-                    <p>Case ID: @caseTranscript.CaseData.Id</p>
-                    <p>Case ClaimNumber: @caseTranscript.CaseData.ClaimNumber</p>
-                    <p>Case DateOfLoss: @caseTranscript.CaseData.DateOfLoss</p>
-                    <p>Case PolicyNumber: @caseTranscript.CaseData.PolicyNumber</p>
-                    <p>Case Deductible: @caseTranscript.CaseData.Deductible</p>
-                    <p>Case Brand:  @caseTranscript.CaseData.Brand</p>
-                    <p>Case Archived: @caseTranscript.CaseData.Archived </p>
-                    @if (caseTranscript.CaseData.LineOfBusiness != null)
-                    {
-                        <h5>Line of Business</h5>
-                        <p>Type: @caseTranscript.CaseData.LineOfBusiness.Type</p>
-                        <p>SubType: @caseTranscript.CaseData.LineOfBusiness.SubType</p>
-                    }
-                }
-        
-                <table>
-                    <tr>
-                        <td><p>Case State: @caseTranscript.State</p></td>
-                    </tr>
-                </table>
-                <p>Case Type: @caseTranscript.CaseType</p>
-                <p>Case Business Name: @caseTranscript.BusinessName</p>
-                <p>Case Privacy: @caseTranscript.Privacy</p>
-                <p>Case Language Preference: @caseTranscript.LanguagePreference</p>
-                @if (caseTranscript.CreatedBy != null)
-                {
-                    <h4>Created By</h4>
-                    <p>First Name: @caseTranscript.CreatedBy.FirstName</p>
-                    <p>Last Name: @caseTranscript.CreatedBy.LastName</p>
-                    <p>Email: @caseTranscript.CreatedBy.Email</p>
-                    <p>Mobile: @caseTranscript.CreatedBy.PhoneNumber</p>
-                }
-                @if(caseTranscript.SecondaryOperators != null)
-                {
-                    @foreach(BreeceWorks.Shared.CaseObjects.Operator curOperator in caseTranscript.SecondaryOperators)
-                    {
-                        <h4>Secondary Operator</h4>
-                        <p>First Name: @curOperator.FirstName</p>
-                        <p>Last Name: @curOperator.LastName</p>
-                        <p>Email: @curOperator.Email</p>
-                        <p>Mobile: @curOperator.PhoneNumber</p>
-                    }
                 }
 
             </td>

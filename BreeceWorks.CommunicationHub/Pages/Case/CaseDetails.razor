@@ -15,6 +15,20 @@ else
     }
         <table>
             <tr>
+                <td>
+                    <table>
+                    <tr>
+                        <td>
+                            <button @onclick="@(() => OpenCaseCommunications(curCaseID))">Case Communication Details</button>
+                        </td>
+                        <td>
+                            <button @onclick="@(() => EditCase(curCase.CaseData.Id))">Edit Case</button>
+                        </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
             <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
                 <td><button @onclick="@(() => ReassignCase())">Reassign Case</button></td>
                 <td><button @onclick="@(() => UnassignCase())">Unassign Case</button></td>
@@ -22,11 +36,6 @@ else
         </table>
         @if (curCase.CaseData != null)
         {
-            <table>
-                <tr>
-                    <td><button @onclick="@(() => EditCase(curCase.CaseData.Id))">Edit Case</button></td>
-                </tr>
-            </table>
             <h4>Case Data</h4>
             <p>Case ID: @curCase.CaseData.Id</p>
             <p>Case ClaimNumber: @curCase.CaseData.ClaimNumber</p>

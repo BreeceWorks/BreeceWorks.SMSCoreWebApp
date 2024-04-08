@@ -1,4 +1,4 @@
-﻿using BreeceWorks.CommunicationWebApi.Objects;
+﻿using BreeceWorks.Shared.SMS;
 
 namespace BreeceWorks.CommunicationWebApi.Services.Interfaces
 {
