@@ -1,7 +1,7 @@
 ﻿using BreeceWorks.Shared;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Entities;
-using BreeceWorks.SMSCoreWebApi.Objects;
+using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.Services.Interface;
 
 namespace BreeceWorks.SMSCoreWebApi.Services.Implementation

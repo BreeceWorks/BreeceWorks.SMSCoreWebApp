@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using BreeceWorks.CommunicationWebApi.Objects;
 using BreeceWorks.CommunicationWebApi.ResponseObjects;
 using BreeceWorks.CommunicationWebApi.Services.Interfaces;
 using BreeceWorks.Shared.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BreeceWorks.CommunicationWebApi.Controllers

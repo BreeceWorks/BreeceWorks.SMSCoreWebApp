@@ -1,6 +1,4 @@
-﻿using BreeceWorks.CommunicationWebApi.Objects;
-using BreeceWorks.CommunicationWebApi.RequestObjects;
-using BreeceWorks.CommunicationWebApi.ResponseObjects;
+﻿using BreeceWorks.CommunicationWebApi.RequestObjects;
 using BreeceWorks.Shared.Entities;
 using BreeceWorks.Shared.SMS;
 

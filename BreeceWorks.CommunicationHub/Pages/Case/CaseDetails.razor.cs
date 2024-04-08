@@ -8,7 +8,19 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
     public partial class CaseDetails
     {
         private BreeceWorks.Shared.CaseObjects.Case? curCase { get; set; }
-        
+        private Guid _curCaseID;
+        private Guid curCaseID 
+        { 
+            get
+            {
+                return _curCaseID;
+            }
+            set
+            {
+                _curCaseID = value;
+            }
+        }
+
         [Inject]
         private ICommunicationService CommunicationService
         {
@@ -26,9 +38,8 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
             var queryStrings = QueryHelpers.ParseQuery(uri.Query);
             if (queryStrings.TryGetValue("CaseID", out var caseId))
-            {
-                Guid curCaseID;
-                if (Guid.TryParse(caseId, out curCaseID))
+            {                
+                if (Guid.TryParse(caseId, out _curCaseID))
                 {
                     curCase = await CommunicationService.GetCaseByID(curCaseID);
                     if (curCase.PrimaryContact != null)
@@ -98,5 +109,9 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
             }
         }
 
+        protected void OpenCaseCommunications(Guid caseId)
+        {
+            NavManager.NavigateTo(string.Format("/opencasecommunications?CaseID={0}", caseId));
+        }
     }
 }

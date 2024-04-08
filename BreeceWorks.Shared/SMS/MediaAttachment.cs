@@ -1,4 +1,4 @@
-﻿namespace BreeceWorks.SMSCoreWebApi.Objects
+﻿namespace BreeceWorks.Shared.SMS
 {
     public class MediaAttachment
     {
