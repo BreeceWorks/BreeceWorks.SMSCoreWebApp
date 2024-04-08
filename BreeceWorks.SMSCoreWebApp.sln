@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.CommunicationWe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.Shared", "BreeceWorks.Shared\BreeceWorks.Shared.csproj", "{403B7E4E-6E3D-42FD-91AE-F22C7DDBC343}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.SMSLibrary", "BreeceWorks.SMSLibrary\BreeceWorks.SMSLibrary.csproj", "{D1774CA2-DB48-4EEE-B5E8-B3E36E1DEAE7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.SMSCoreWebApi", "BreeceWorks.SMSCoreWebApi\BreeceWorks.SMSCoreWebApi.csproj", "{E8506852-0AF7-4B51-8379-646FE309D432}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.DemoSMSSimulator.Server", "BreeceWorks.DemoSMSSimulator\Server\BreeceWorks.DemoSMSSimulator.Server.csproj", "{4B034572-B3F8-4F1D-85DA-011B7F3181C2}"
@@ -18,10 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.CommunicationHub", "BreeceWorks.CommunicationHub\BreeceWorks.CommunicationHub.csproj", "{05410C5D-7C98-4AF3-8B33-3B08295AFC1C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{1EBC9C15-69F4-4464-9EBE-9E3DB5EF81F7}"
-	ProjectSection(SolutionItems) = preProject
-		Documents\ReadMe.docx = Documents\ReadMe.docx
-		Documents\SMSCommunicationDB.sql = Documents\SMSCommunicationDB.sql
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +31,6 @@ Global
 		{403B7E4E-6E3D-42FD-91AE-F22C7DDBC343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{403B7E4E-6E3D-42FD-91AE-F22C7DDBC343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{403B7E4E-6E3D-42FD-91AE-F22C7DDBC343}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1774CA2-DB48-4EEE-B5E8-B3E36E1DEAE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1774CA2-DB48-4EEE-B5E8-B3E36E1DEAE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1774CA2-DB48-4EEE-B5E8-B3E36E1DEAE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1774CA2-DB48-4EEE-B5E8-B3E36E1DEAE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E8506852-0AF7-4B51-8379-646FE309D432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8506852-0AF7-4B51-8379-646FE309D432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8506852-0AF7-4B51-8379-646FE309D432}.Release|Any CPU.ActiveCfg = Release|Any CPU

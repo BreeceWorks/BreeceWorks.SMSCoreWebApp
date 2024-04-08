@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BreeceWorks.Shared.SMS
+﻿namespace BreeceWorks.Shared.SMS
 {
     public class SMSOutgoingMessage
     {

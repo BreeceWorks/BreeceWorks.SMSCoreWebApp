@@ -1,5 +1,4 @@
-﻿using BreeceWorks.Shared.Services;
-using BreeceWorks.SMSCoreWebApi.Objects;
+﻿using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 

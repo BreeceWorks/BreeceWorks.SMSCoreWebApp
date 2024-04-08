@@ -7,10 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.JSInterop;
-using System.Net.Http.Headers;
-using System.Reflection;
 using static BreeceWorks.Shared.Constants;
 
 namespace BreeceWorks.CommunicationHub.Pages.Communications
@@ -21,6 +18,18 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
         private string? sender;
         private string? recipient;
         private string? messageInput;
+        private Guid _curCaseID;
+        private Guid curCaseID
+        {
+            get
+            {
+                return _curCaseID;
+            }
+            set
+            {
+                _curCaseID = value;
+            }
+        }
 
 
         private BreeceWorks.Shared.CaseObjects.CaseTranscript? caseTranscript { get; set; }
@@ -82,8 +91,8 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
             var queryStrings = QueryHelpers.ParseQuery(uri.Query);
             if (queryStrings.TryGetValue("CaseID", out var caseId))
             {
-                Guid curCaseID;
-                if (Guid.TryParse(caseId, out curCaseID))
+                
+                if (Guid.TryParse(caseId, out _curCaseID))
                 {
                     caseTranscript = await CommunicationService.GetCaseTranscript(curCaseID);
                     if (caseTranscript != null && caseTranscript.Errors != null && caseTranscript.Errors.Count > 0)
@@ -242,6 +251,10 @@ namespace BreeceWorks.CommunicationHub.Pages.Communications
             {
                 await hubConnection.DisposeAsync();
             }
+        }
+        protected void OpenCaseDetails(Guid caseID)
+        {
+            NavManager.NavigateTo(string.Format("/caseDetails?CaseID={0}", caseID));
         }
     }
 

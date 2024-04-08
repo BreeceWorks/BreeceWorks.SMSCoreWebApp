@@ -1,7 +1,5 @@
-﻿using BreeceWorks.CommunicationWebApi.Objects;
-using BreeceWorks.CommunicationWebApi.Services.Interfaces;
+﻿using BreeceWorks.CommunicationWebApi.Services.Interfaces;
 using BreeceWorks.Shared.SMS;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BreeceWorks.CommunicationWebApi.Controllers
