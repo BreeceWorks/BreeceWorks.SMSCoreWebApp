@@ -4,7 +4,6 @@ using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.IControllers;
 using BreeceWorks.SMSCoreWebApi.Objects;
 using BreeceWorks.SMSCoreWebApi.Validation;
-using IO.ClickSend.ClickSend.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 using System.Text.Json;

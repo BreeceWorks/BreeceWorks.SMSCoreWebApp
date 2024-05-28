@@ -2,6 +2,10 @@
 using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Enums;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 
 namespace BreeceWorks.CommunicationHub.Pages.Case
 {
@@ -10,6 +14,14 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
         private CaseCreateRqst? caseCreateRqst { get; set; }
 
         private String? ErrorMessage { get; set; }
+
+        private Boolean generalFormValid { get; set; }
+        private Boolean caseDataFormValid {  get; set; }
+        private Boolean customerFormValid { get; set; }
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
 
         [Inject]
         private ICommunicationService? CommunicationService
@@ -79,8 +91,17 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
 
         protected async void OpenNewCase()
         {
+            await JSRuntime.InvokeVoidAsync("validateCustomer", null);
 
-            if (caseCreateRqst != null && CommunicationService != null)
+        }
+
+
+
+        private async void HandleGeneralValidation(EditContext editContext)
+        {
+            generalFormValid = editContext.Validate();
+
+            if (caseCreateRqst != null && CommunicationService != null && customerFormValid && caseDataFormValid && generalFormValid)
             {
                 ErrorMessage = ValidateRequest();
                 if (String.IsNullOrEmpty(ErrorMessage))
@@ -112,69 +133,32 @@ namespace BreeceWorks.CommunicationHub.Pages.Case
                 }
                 StateHasChanged();
             }
+
+        }
+        private async void HandleCaseDataValidation(EditContext editContext)
+        {
+            caseDataFormValid = editContext.Validate(); 
+            await JSRuntime.InvokeVoidAsync("validateGeneral", null);
+        }
+        private async void HandleCustomerdValidation(EditContext editContext)
+        {
+            customerFormValid = editContext.Validate();
+            await JSRuntime.InvokeVoidAsync("validateCaseData", null);
+        }
+        protected void Cancel()
+        {
+            NavManager.NavigateTo("/casemanagement");
         }
 
         private string? ValidateRequest()
         {
             String exceptionMessage = null;
-            if (caseCreateRqst != null)
-            {
-                if (!String.IsNullOrEmpty(caseCreateRqst.CaseType))
-                {
-                    if (caseCreateRqst.CaseData != null)
-                    {
-                        if (String.IsNullOrEmpty(caseCreateRqst.CaseData.ClaimNumber))
-                        {
-                            exceptionMessage = "The claimNumber field is required.";
-                        }
-                        if (String.IsNullOrEmpty(caseCreateRqst.CaseData.PolicyNumber))
-                        {
-                            exceptionMessage = "The policyNumber field is required.";
-                        }
-                    }
-                    else
-                    {
-                        exceptionMessage = "Case Data is required";
-                    }
-                    if (caseCreateRqst.Customer != null)
-                    {
-                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.First))
-                        {
-                            exceptionMessage = "Customer First Name field is required.";
-                        }
-                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.Last))
-                        {
-                            exceptionMessage = "Cuatomer Last Name field is required.";
-                        }
-                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.Email))
-                        {
-                            exceptionMessage = "Customer Email field is required.";
-                        }
-                        if (String.IsNullOrEmpty(caseCreateRqst.Customer.Mobile))
-                        {
-                            exceptionMessage = "Customer Mobile field is required.";
-                        }
-                    }
-                    else
-                    {
-                        exceptionMessage = "Customer is required";
-                    }
-                }
-                else
-                {
-                    exceptionMessage = "Case Type is required";
-                }
-            }
-            else
+            if (caseCreateRqst == null)
             {
                 exceptionMessage = "Case Create Request is null";
             }
             return exceptionMessage;
         }
 
-        protected void Cancel()
-        {
-            NavManager.NavigateTo("/casemanagement");
-        }
     }
 }

@@ -1,8 +1,19 @@
 ﻿@using BreeceWorks.CommunicationHub.Pages.Components;
 @page "/newCase"
 
+<script>
+    function validateCustomer() {
+        document.getElementById("customerValidation").click();
+    }
+    function validateCaseData() {
+        document.getElementById("caseDataValidation").click();
+    }
+    function validateGeneral() {
+        document.getElementById("generalValidation").click();
+    }
+</script>
 
-<h3>New Case</h3>
+    <h3>New Case</h3>
 
 @if (caseCreateRqst == null)
 {
@@ -10,89 +21,132 @@
 }
 else
 {
-    @if (!String.IsNullOrEmpty(ErrorMessage))
-    {
-        <p style="color:red"><em>@ErrorMessage</em></p>
-    }
-     
-        @if (caseCreateRqst.CaseData != null)
-        {
-            <h4>Case Data</h4>
-            <p>Case ClaimNumber: <div><InputText @bind-Value="caseCreateRqst.CaseData.ClaimNumber" /></div></p>
-            <p>Case DateOfLoss: <div><InputText @bind-Value="caseCreateRqst.CaseData.DateOfLoss"  /></div></p>
-            <p>Case PolicyNumber: <div><InputText @bind-Value="caseCreateRqst.CaseData.PolicyNumber" /></div></p>
-            <p>Case Deductible: <div><input type="number" @bind="@caseCreateRqst.CaseData.Deductible" /></div></p>
-            <p>Case Brand:  <div><InputText @bind-Value="caseCreateRqst.CaseData.Brand" /></div></p>
-            @if (caseCreateRqst.CaseData.LineOfBusiness != null)
-            {
-                <h5>Line of Business</h5>
-                <p>Type: <div><InputText @bind-Value="caseCreateRqst.CaseData.LineOfBusiness.Type" /></div></p>
-                <p>SubType: <div><InputText @bind-Value="caseCreateRqst.CaseData.LineOfBusiness.SubType" /></div></p>
-                <td><button @onclick="@(() => RemoveLineOfBusiness())">Remove Line Of Business</button></td>
-            }
-            else if (caseCreateRqst.CaseData.LineOfBusiness == null)
-            {
-                <td><button @onclick="@(() => AddLineOfBusiness())">Add Line Of Business</button></td>
-            }
-        }
+    <table>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            @if (!String.IsNullOrEmpty(ErrorMessage))
+                            {
+                                <p style="color:red"><em>@ErrorMessage</em></p>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <EditForm Model=@caseCreateRqst Context="generalFormContext" OnSubmit="HandleGeneralValidation">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <p>Case Type: <div><CaseTypeSelection @bind-Value="caseCreateRqst.CaseType" /></div></p>
+                    <p>Case Business Name: <div><InputText @bind-Value="caseCreateRqst.BusinessName" /></div></p>
+                    <p><PrivacySelection @bind-Value="PrivacySelection" /></p>
+                    <p><LanguagePreferenceSelection @bind-Value="LanguagePreferenceSelection" /></p>
 
-    <p>Case Type: <div><CaseTypeSelection @bind-Value="caseCreateRqst.CaseType" /></div></p>
-    <p>Case Business Name: <div><InputText @bind-Value="caseCreateRqst.BusinessName" /></div></p>
-@*     <p>Case Privacy: <div><InputText @bind-Value="caseCreateRqst.Privacy" /></div></p>
-    <p>Case Language Preference: <div><InputText @bind-Value="caseCreateRqst.LanguagePreference" /></div></p>
- *@        
-        <p><PrivacySelection @bind-Value="PrivacySelection" /></p>
-        <p><LanguagePreferenceSelection @bind-Value="LanguagePreferenceSelection" /></p>
-        @if(caseCreateRqst.Customer != null)
-        {
-            <h4>Customer</h4>
-        <p>First Name: <div><InputText @bind-Value="caseCreateRqst.Customer.First" /></div></p>
-        <p>Last Name: <div><InputText @bind-Value="caseCreateRqst.Customer.Last" /></div></p>
-        <p>Email: <div><InputText @bind-Value="caseCreateRqst.Customer.Email" /></div></p>
-        <p>Mobile: <div><InputText @bind-Value="caseCreateRqst.Customer.Mobile" /></div></p>
-        }
-        @if (caseCreateRqst.PrimaryContact != null)
-        {
-        <table>
-            <tr>
-                <td>
-                    <h4>Primary Contact</h4>
-                </td>
-            </tr>
-            <tr>
-                <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
-            </tr>
-            <tr>
-                <td><button @onclick="@(() => RemovePrimaryContact())">Remove Primary Contact</button></td>
-            </tr>
-        </table>
-        }
-        else
-        {
-        <table>
-            <tr>
-            <td><button @onclick="@(() => AddPrimaryContact())">Add Primary Contact</button></td>
-            </tr>
-        </table>
-        }
-        @if (caseCreateRqst.CreatedBy != null)
-        {
-            <h4>Created By</h4>
-            <p>Email: <div><InputText @bind-Value="caseCreateRqst.CreatedBy.Email" /></div></p>
-        }
-        @if(caseCreateRqst.SecondaryOperators != null)
-        {
-@*             @foreach(Operator curOperator in caseCreateRqst.SecondaryOperators)
-            {
-                <h4>Secondary Operator</h4>
-                <p>First Name: @curOperator.FirstName</p>
-                <p>Last Name: @curOperator.LastName</p>
-                <p>Email: @curOperator.Email</p>
-                <p>Mobile: @curOperator.PhoneNumber</p>
-            }
- *@        }
+                    @if (caseCreateRqst.PrimaryContact != null)
+                    {
+                        <table>
+                            <tr>
+                                <td>
+                                    <h4>Primary Contact</h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><OperatorSelection @bind-Value="AssignOperatorID" /></td>
+                            </tr>
+                            <tr>
+                                <td><button @onclick="@(() => RemovePrimaryContact())">Remove Primary Contact</button></td>
+                            </tr>
+                        </table>
+                    }
+                    else
+                    {
+                        <table>
+                            <tr>
+                                <td><button @onclick="@(() => AddPrimaryContact())">Add Primary Contact</button></td>
+                            </tr>
+                        </table>
+                    }
+                    @if (caseCreateRqst.CreatedBy != null)
+                    {
+                        <h4>Created By</h4>
+                        <p>Email: <div><InputText @bind-Value="caseCreateRqst.CreatedBy.Email" /></div></p>
+                    }
+                    @if (caseCreateRqst.SecondaryOperators != null)
+                    {
+                        @*            
+                            @foreach(Operator curOperator in caseCreateRqst.SecondaryOperators)
+                            {
+                                <h4>Secondary Operator</h4>
+                                <p>First Name: @curOperator.FirstName</p>
+                                <p>Last Name: @curOperator.LastName</p>
+                                <p>Email: @curOperator.Email</p>
+                                <p>Mobile: @curOperator.PhoneNumber</p>
+                            }
+                    *@        
+                    }
 
+                    <div class="row content">
+                        <button id="generalValidation" type="submit" style="visibility:hidden">Validate</button>
+                    </div>
+                </EditForm>
+            </td>
+            <td>
+                <EditForm Model="@caseCreateRqst.CaseData" OnSubmit="HandleCaseDataValidation" Context="caseDataContext">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    @if (caseCreateRqst.CaseData != null)
+                    {
+                        <h4>Case Data</h4>
+                        <p>Case ClaimNumber: <div><InputText @bind-Value="caseCreateRqst.CaseData.ClaimNumber" /></div></p>
+                        <p>Case DateOfLoss: <div><InputText @bind-Value="caseCreateRqst.CaseData.DateOfLoss" /></div></p>
+                        <p>Case PolicyNumber: <div><InputText @bind-Value="caseCreateRqst.CaseData.PolicyNumber" /></div></p>
+                        <p>Case Deductible: <div><input type="number" @bind="@caseCreateRqst.CaseData.Deductible" /></div></p>
+                        <p>Case Brand:  <div><InputText @bind-Value="caseCreateRqst.CaseData.Brand" /></div></p>
+                        @if (caseCreateRqst.CaseData.LineOfBusiness != null)
+                        {
+                            <h5>Line of Business</h5>
+                            <p>Type: <div><InputText @bind-Value="caseCreateRqst.CaseData.LineOfBusiness.Type" /></div></p>
+                            <p>SubType: <div><InputText @bind-Value="caseCreateRqst.CaseData.LineOfBusiness.SubType" /></div></p>
+                            <td><button @onclick="@(() => RemoveLineOfBusiness())">Remove Line Of Business</button></td>
+                        }
+                        else if (caseCreateRqst.CaseData.LineOfBusiness == null)
+                        {
+                            <td><button @onclick="@(() => AddLineOfBusiness())">Add Line Of Business</button></td>
+                        }
+                    }
+                    <div class="row content">
+                        <button id="caseDataValidation" type="submit" style="visibility: hidden">Validate</button>
+                    </div>
+
+                </EditForm>
+            </td>
+            <td>
+                <EditForm Model="@caseCreateRqst.Customer" OnSubmit="HandleCustomerdValidation" Context="customerContext">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    @if (caseCreateRqst.Customer != null)
+                    {
+                        <h4>Customer</h4>
+                        <p>First Name: <div><InputText @bind-Value="caseCreateRqst.Customer.First" /></div></p>
+                        <p>Last Name: <div><InputText @bind-Value="caseCreateRqst.Customer.Last" /></div></p>
+                        <p>Email: <div><InputText @bind-Value="caseCreateRqst.Customer.Email" /></div></p>
+                        <p>Mobile: <div><InputText @bind-Value="caseCreateRqst.Customer.Mobile" /></div></p>
+                    }
+                    <div class="row content">
+                        <button id="customerValidation" type="submit" style="visibility: hidden">Validate</button>
+                    </div>
+
+                </EditForm>
+            </td>
+        </tr>
+    </table>
     <table>
         <tr><td><button @onclick="@(() => OpenNewCase())">Open New Case</button></td><td><button @onclick="@(() => Cancel())">Cancel</button></td></tr>
     </table>
+
 }

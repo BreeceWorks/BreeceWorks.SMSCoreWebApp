@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace BreeceWorks.Shared.CaseObjects
         private string _brand;
         private LineOfBusinessRqst _lineOfBusiness;
 
+        [Required(ErrorMessage = "The claimNumber field is required.")]
         public string ClaimNumber
         {
             get { return _claimNumber; }
@@ -27,6 +29,7 @@ namespace BreeceWorks.Shared.CaseObjects
                 }
             }
         }
+
 
         public string DateOfLoss
         {
@@ -41,6 +44,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
+        [Required(ErrorMessage = "The policyNumber field is required.")]
         public string PolicyNumber
         {
             get { return _policyNumber; }

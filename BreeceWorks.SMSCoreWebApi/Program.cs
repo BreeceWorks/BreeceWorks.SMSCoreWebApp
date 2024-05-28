@@ -62,7 +62,6 @@ builder.Services.AddDbContext<CommunicationDbContext>(options =>
        .GetConnectionString("SMSCommunicationDBConnectionString"));
 });
 
-builder.Services.AddHttpClient<ClickSendSMSController>();
 builder.Services.AddHttpClient<DemoSMSController>();
 builder.Services.AddHttpClient<TwilioSMSController>();
 

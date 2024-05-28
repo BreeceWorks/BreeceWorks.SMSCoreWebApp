@@ -61,6 +61,10 @@ namespace BreeceWorks.CommunicationHub.Pages.Components
                     {
                         ErrorMessage = operators.Errors[0].Detail;
                     }
+                    else if (operators != null && (operators.Operators1 == null || operators.Operators1.Count == 0))
+                    {
+                        ErrorMessage = Constants.ErrorMessages.OperatorsNotFound;
+                    }
                 }
             }
             else

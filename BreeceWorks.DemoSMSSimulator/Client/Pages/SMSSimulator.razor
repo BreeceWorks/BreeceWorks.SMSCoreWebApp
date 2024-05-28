@@ -1,0 +1,184 @@
+﻿@page "/smssimulator"
+
+
+<h3>SMSSimulator</h3>
+
+@using BreeceWorks.Shared.SMS;
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+
+<PageTitle>Index</PageTitle>
+
+<div class="form-group">
+    <label>
+        Sender:
+        <input @bind="sender" />
+        <select value="@sender" @onchange="SetCustomerNumber">
+            @foreach (var customerNumber in secondParties)
+            {
+                <option value=@customerNumber>@customerNumber</option>
+            }
+        </select>
+    </label>
+</div>
+<div class="form-group">
+    <label>
+        Recipient:
+        <input @bind="recipient" />
+        <select value="@recipient" @onchange="SetCompanyNumber">
+            @foreach (var companyNumber in firstParties)
+            {
+                <option value=@companyNumber>@companyNumber</option>
+            }
+        </select>
+    </label>
+</div>
+<div class="form-group">
+    <label>
+        Message:
+        <input @bind="messageInput" size="50" />
+    </label>
+</div>
+<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+
+<hr>
+
+<ul id="messagesList">
+    @foreach (var conv in conversations)
+    {
+        <table style="border-style:double; border-color: black; border-radius: 25px;">
+            <tr>
+                <td>@conv.FirstParty</td>
+                <td>  </td>
+                <td>@conv.SecondParty</td>
+            </tr>
+            <tr>
+                <td>
+                    <ul>
+                        @foreach (var message in conv.Messages)
+                        {
+                            <li style="border-style:double; border-color: black; border-radius: 25px;">
+                                <table>
+                                    <tr>
+                                        <td>from: @message.From  to: @message.To  message: @message.MessageContent</td>
+                                    </tr>
+                                    <tr>
+                                        @foreach (String url in message.AttachmentURLs)
+                                        {
+                                            <td>Attachment: <a href="@url" target="_blank"><img id="ItemPreview" height="200" width="200" src="@url"></a></td>
+                                        }
+                                    </tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                    <tr></tr>
+                                </table>
+                            </li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    }
+</ul>
+
+@code {
+    private HubConnection? hubConnection;
+    private string? sender;
+    private string? recipient;
+    private string? messageInput;
+    private List<Conversation> conversations = new List<Conversation>();
+    private List<String> firstParties = new List<string>();
+    private List<String> secondParties = new List<string>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        hubConnection.On<string, string, string, List<SMSAttachment>>("ReceiveMessage", (from, to, message, attachmentUrls) =>
+        {
+            Conversation curConversation = conversations.Where(c => (c.FirstParty == from && c.SecondParty == to) || (c.SecondParty == from && c.FirstParty == to)).FirstOrDefault();
+            if (curConversation == null)
+            {
+                curConversation = new Conversation() { FirstParty = from, SecondParty = to };
+                List<String> urls = new List<String>();
+                if (attachmentUrls != null && attachmentUrls.Count > 0)
+                {
+                    foreach (SMSAttachment attachment in attachmentUrls)
+                    {
+                        urls.Add(attachment.url);
+                    }
+                }
+                curConversation.Messages.Add(new Message() { From = from, To = to, MessageContent = message, AttachmentURLs = urls });
+                conversations.Add(curConversation);
+                if (!String.IsNullOrEmpty(curConversation.SecondParty))
+                {
+                    secondParties.Add(curConversation.SecondParty);
+                    if (secondParties.Count == 1)
+                    {
+                        sender = curConversation.SecondParty;
+                    }
+                }
+                if (!String.IsNullOrEmpty(curConversation.FirstParty))
+                {
+                    firstParties.Add(curConversation.FirstParty);
+                    if (firstParties.Count == 1)
+                    {
+                        recipient = curConversation.FirstParty;
+                    }
+                }
+            }
+            else
+            {
+                List<String> urls = new List<String>();
+                if (attachmentUrls != null && attachmentUrls.Count > 0)
+                {
+                    foreach (SMSAttachment attachment in attachmentUrls)
+                    {
+                        urls.Add(attachment.url);
+                    }
+                }
+                curConversation.Messages.Add(new Message() { From = from, To = to, MessageContent = message, AttachmentURLs = urls });
+            }
+
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    void SetCustomerNumber(ChangeEventArgs e)
+    {
+        sender = e.Value.ToString();
+    }
+
+    void SetCompanyNumber(ChangeEventArgs e)
+    {
+        recipient = e.Value.ToString();
+    }
+
+    private async Task Send()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendMessage", sender, recipient, messageInput);
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

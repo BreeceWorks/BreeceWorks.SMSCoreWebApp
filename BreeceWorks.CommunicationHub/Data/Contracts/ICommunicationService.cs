@@ -1,8 +1,12 @@
-﻿namespace BreeceWorks.CommunicationHub.Data.Contracts
+﻿using BreeceWorks.Shared.CaseObjects;
+
+namespace BreeceWorks.CommunicationHub.Data.Contracts
 {
     public interface ICommunicationService
     {
         Task<BreeceWorks.Shared.CaseObjects.Users> GetAllUsers();
+        Task<Customer> GetUserById(Guid id);
+        Task<Customer> SaveUser(Customer customer);
         Task<BreeceWorks.Shared.CaseObjects.Operators> GetAllOperators();
         Task<BreeceWorks.Shared.CaseObjects.Operator> CreateOperator(BreeceWorks.Shared.CaseObjects.Operator newOperator);
         Task<BreeceWorks.Shared.CaseObjects.Operator> DeleteOperator(Guid operatorId);

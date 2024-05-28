@@ -39,6 +39,7 @@ namespace BreeceWorks.CommunicationWebApi.ResponseObjects
             }
         }
         public String? businessName { get; set; }
+        public String? SMSNumber { get; set; }
         public Customer? customer { get; set; }
         public Operator? primaryContact { get; set; }
         public Operator? createdBy { get; set; }

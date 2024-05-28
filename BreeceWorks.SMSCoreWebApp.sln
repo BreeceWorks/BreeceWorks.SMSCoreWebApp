@@ -16,6 +16,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.CommunicationHub", "BreeceWorks.CommunicationHub\BreeceWorks.CommunicationHub.csproj", "{05410C5D-7C98-4AF3-8B33-3B08295AFC1C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{1EBC9C15-69F4-4464-9EBE-9E3DB5EF81F7}"
+	ProjectSection(SolutionItems) = preProject
+		Documents\ReadMe.docx = Documents\ReadMe.docx
+		Documents\SMSCommunicationDB.sql = Documents\SMSCommunicationDB.sql
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreeceWorks.DemoSMS", "BreeceWorks.DemoSMS\BreeceWorks.DemoSMS.csproj", "{750DD117-DB2D-45ED-B6B4-112C1F3E4A8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +53,10 @@ Global
 		{05410C5D-7C98-4AF3-8B33-3B08295AFC1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05410C5D-7C98-4AF3-8B33-3B08295AFC1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05410C5D-7C98-4AF3-8B33-3B08295AFC1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{750DD117-DB2D-45ED-B6B4-112C1F3E4A8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{750DD117-DB2D-45ED-B6B4-112C1F3E4A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{750DD117-DB2D-45ED-B6B4-112C1F3E4A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{750DD117-DB2D-45ED-B6B4-112C1F3E4A8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

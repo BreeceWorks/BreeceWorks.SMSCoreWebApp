@@ -29,5 +29,7 @@ namespace BreeceWorks.CommunicationHub.Data.Contracts
         Dispatcher.Proxies.CaseCreateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.CaseCreateRqst caseCreateRqst);
         Dispatcher.Proxies.CaseUpdateRqst TranslateToProxy(BreeceWorks.Shared.CaseObjects.Case updatedCase);
         Dispatcher.Proxies.SMSOutgoingCommunication TranslateToProxy(BreeceWorks.Shared.SMS.SMSOutgoingCommunication sMSOutgoingCommunication);
+        Dispatcher.Proxies.Customer TranslateToProxy(BreeceWorks.Shared.CaseObjects.Customer customer);
+
     }
 }

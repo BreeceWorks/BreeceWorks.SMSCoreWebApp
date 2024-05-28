@@ -13,5 +13,6 @@ namespace BreeceWorks.CommunicationWebApi.Services.Interfaces
         public Case[]? GetCustomerActiveCasesByEmail(string email);
         public Case[]? GetCustomerActiveCasesByMobile(string mobile);
         public Case[]? GetCustomerActiveCasesByUserId(Guid userId);
+        public CustomerDto? UpdateCustomerDto(CustomerDto customerDto);
     }
 }

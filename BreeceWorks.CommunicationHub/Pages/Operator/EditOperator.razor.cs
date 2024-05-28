@@ -19,7 +19,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Operator
         {
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
             var queryStrings = QueryHelpers.ParseQuery(uri.Query);
-            if (queryStrings.TryGetValue("OperatorIdID", out var operatorId))
+            if (queryStrings.TryGetValue("OperatorID", out var operatorId))
             {
                 Guid curOperatorID;
                 if (Guid.TryParse(operatorId, out curOperatorID))
