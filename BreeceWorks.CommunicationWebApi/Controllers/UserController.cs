@@ -432,5 +432,76 @@ namespace BreeceWorks.CommunicationWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Save user
+        /// </summary>
+        /// <remarks>Saves the user</remarks>
+        /// <response code="200"></response>
+        /// <response code="400"></response>
+        [HttpPost]
+        //[Route("actions/saveUser")]
+        public ActionResult<Users> SaveUser([FromBody] ResponseObjects.Customer customer)
+        {
+            try
+            {
+                Users userRspse = new Users();
+                CustomerDto? customerDto = null;
+                if (customer.id == Guid.Empty)
+                {
+                    customerDto = _customerService.AddCustomerDto(new CustomerDto()
+                    {
+                        Email = customer.email,
+                        First = customer.first,
+                        Last = customer.last,
+                        Mobile = customer.mobile,
+                        OptStatus = false,
+                        OptStatusDetail = customer.optStatusDetail,
+                        Id = Guid.NewGuid(),
+                    });
+                }
+                else
+                {
+                    customerDto = _customerService.GetCustomerDtos()?.Where(c => c.Id == customer.id).FirstOrDefault();
+                    if (customerDto != null)
+                    {
+                        customerDto.Email = customerDto.Email;
+                        customerDto.Mobile = customerDto.Mobile;
+                        customerDto.First = customerDto.First;
+                        customerDto.Last = customerDto.Last;
+                        customerDto =_customerService.UpdateCustomerDto(customerDto);
+                        userRspse.customers = new ResponseObjects.Customer[1];
+                        Objects.Customer? customerObject = _translatorService.TranslateToObject(customerDto);
+                        ResponseObjects.Customer? customerRspse1 = _translatorService.TranslateToRspse(customerObject);
+                        if (customerRspse1 != null)
+                        {
+                            userRspse.customers[0] = customerRspse1;
+                        }
+                    }
+                }
+                return userRspse;
+            }
+            catch (Exception ex)
+            {
+                return new Users()
+                {
+                    errors = new Error[]
+                    {
+                            new Error()
+                            {
+                                code = ex.Message,
+                                category = "DataIntegrityError",
+                                retryable = false,
+                                status = 500,
+                                detail = ex.Message,
+                                path = "/user/{value}",
+                                method = "POST",
+                            }
+                    }
+                };
+            }
+        }
+
+
+
     }
 }

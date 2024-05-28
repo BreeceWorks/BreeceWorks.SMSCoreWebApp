@@ -6,6 +6,7 @@
         private CaseData _caseData;
         private string _caseType;
         private string _businessName;
+        private string _smsNumber;
         private Customer _customer;
         private Operator? _primaryContact;
         private Operator? _createdBy;
@@ -63,6 +64,19 @@
                 if (_businessName != value)
                 {
                     _businessName = value;
+                }
+            }
+        }
+
+        public string SMSNumber
+        {
+            get { return _smsNumber; }
+
+            set
+            {
+                if (_smsNumber != value)
+                {
+                    _smsNumber = value;
                 }
             }
         }

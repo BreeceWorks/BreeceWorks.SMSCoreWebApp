@@ -55,7 +55,7 @@ namespace BreeceWorks.CommunicationHub.Pages.Operator
         protected void EditOperator(Guid? operatorId)
         {
             Error = String.Empty;
-            NavManager.NavigateTo(string.Format("/editOperator?OperatorIdID={0}", operatorId));
+            NavManager.NavigateTo(string.Format("/editOperator?OperatorID={0}", operatorId));
 
         }
 

@@ -74,6 +74,33 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 customer.OptStatusDetail = Shared.Constants.OptStatus.REQUESTED.ToString();
                 customer = _customerService.AddCustomerDto(customer);
             }
+            else
+            {
+                if (customer.Mobile != caseDto.Customer.Mobile
+                    || customer.Email.ToUpper() != caseDto.Customer.Email.ToUpper()
+                    || customer.First.ToUpper() != caseDto.Customer.First.ToUpper()
+                    || customer.Last.ToUpper()  != caseDto.Customer.Last.ToUpper())
+                {
+                    return new CaseDtoRspse()
+                    {
+                        caseDto = caseDto,
+                        errors = new Error[]
+                        {
+                            new Error()
+                            {
+                                code = Constants.ErrorMessages.DuplicateCustomer,
+                                category = "DataIntegrityError",
+                                retryable = false,
+                                status = 400,
+                                detail = Constants.ErrorMessages.DuplicateCustomer,
+                                path = "/case/actions/open",
+                                method = "POST",
+                                requestId = caseDto.Id,
+                            }
+                        }
+                    };
+                }
+            }
             caseDto.Customer = customer;
             if (caseDto.SecondaryOperators != null)
             {

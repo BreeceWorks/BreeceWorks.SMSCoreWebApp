@@ -11,6 +11,7 @@
             public const String ClaimExists = "ClaimExists";
             public const String OperatorsNotFound = "No Operators Were Found.";
             public const String CustomerNotOptedIn = "The customer has not opted in to receiving messages";
+            public const String DuplicateCustomer = "There is another customer with same mobile or email.";
         }
         public static class MessageTemplates
         {

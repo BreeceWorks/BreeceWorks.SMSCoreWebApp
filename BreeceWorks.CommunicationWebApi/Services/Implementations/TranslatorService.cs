@@ -127,7 +127,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 
         public Objects.Operator? TranslateToObject(OperatorBaseRqst? caseOperator)
         {
-            if (caseOperator == null)
+            if (caseOperator == null || String.IsNullOrEmpty(caseOperator.email))
                 return null;
             return new Objects.Operator() { Email = caseOperator.email };
         }
@@ -520,6 +520,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 createdBy = TranslateToRspse(caseObject?.CreatedBy),
                 secondaryOperators = TranslateToRspse(caseObject.SecondaryOperators),
                 state = caseObject.State.ToString(),
+                SMSNumber = caseObject.SMSNumber,
             };
         }
 
@@ -602,7 +603,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 createdBy = TranslateToRspse(caseObject?.CreatedBy),
                 secondaryOperators = TranslateToRspse(caseObject.SecondaryOperators),
                 state = caseObject.State.ToString(),
-                Messages = TranslateToRspse(caseObject.Messages)
+                Messages = TranslateToRspse(caseObject.Messages),
+                SMSNumber = caseObject.SMSNumber,
             };
         }
 

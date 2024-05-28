@@ -324,7 +324,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                     _context.SaveChanges();
                     BroadcastNewMessage(caseDto.Id, messageDto);
 
-                    HandleOptInOut(caseDto, sMSMessage);
+                    HandleOptInOut(caseDto.Customer, sMSMessage);
                 }
             }
             else{
@@ -348,11 +348,9 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
         }
 
-        private void HandleOptInOut(CaseDto caseDto, SMSIncomingeMessage sMSMessage)
+        private void HandleOptInOut(CustomerDto customer, SMSIncomingeMessage sMSMessage)
         {
-            CustomerDto customer = caseDto.Customer;
-
-            String? keyWord = Constants.optKeyWords.Where(k=>k == sMSMessage.message.Trim().ToUpper()).FirstOrDefault();
+            String? keyWord = Constants.optKeyWords.Where(k=>k == (!String.IsNullOrEmpty(sMSMessage.message) ? sMSMessage.message.Trim().ToUpper() : String.Empty)).FirstOrDefault();
 
             if (!String.IsNullOrEmpty(keyWord))
             {
@@ -361,6 +359,8 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 switch (customer.OptStatusDetail)
                 {
                     case Constants.OptStatus.REQUESTED:
+                    case "":
+                    case null:
                         if (keyWord == Constants.OptKeyWords.YES || keyWord == Constants.OptKeyWords.ACCEPT)
                         {
                             messageTemplateName = CustomerOptIn(customer);
@@ -398,27 +398,34 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                         break;
                 }
 
+                List<CaseDto> caseDtos = _context.Cases
+                .Include(m => m.Messages)
+                .Include(cu => cu.Customer)
+                .Where(c => c.Customer.Mobile == sMSMessage.fromNumber && c.Archived == false && c.State == CaseState.open).ToList();
 
-                MessageTemplateDto templatedMessageDto;
-                try
+                foreach (CaseDto caseDto in caseDtos)
                 {
-                    if (!String.IsNullOrEmpty(messageTemplateName))
+                    MessageTemplateDto templatedMessageDto;
+                    try
                     {
-                        templatedMessageDto = _context.MessageTemplates.Include(t => t.TemplateValues).Where(t => t.Name == messageTemplateName).First();
-                        TemplatedMessageRequest templatedMessageRequest = new TemplatedMessageRequest()
+                        if (!String.IsNullOrEmpty(messageTemplateName))
                         {
-                            caseId = caseDto.Id.ToString(),
-                            referenceID = caseDto.ReferenceId,
-                            templateValues = new Dictionary<string, string>(),
-                            source = RequestObjects.TemplateMessageSource.ai.ToString()
-                        };
+                            templatedMessageDto = _context.MessageTemplates.Include(t => t.TemplateValues).Where(t => t.Name == messageTemplateName).First();
+                            TemplatedMessageRequest templatedMessageRequest = new TemplatedMessageRequest()
+                            {
+                                caseId = caseDto.Id.ToString(),
+                                referenceID = caseDto.ReferenceId,
+                                templateValues = new Dictionary<string, string>(),
+                                source = RequestObjects.TemplateMessageSource.ai.ToString()
+                            };
 
-                        SendTemplateMessage(templatedMessageRequest, templatedMessageDto.TemplateId);
+                            SendTemplateMessage(templatedMessageRequest, templatedMessageDto.TemplateId);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
+                    catch (Exception ex)
+                    {
 
+                    }
                 }
             }
         }
@@ -554,7 +561,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             CustomerDto? customerDto = _context.Customers
                 .FirstOrDefault(u => u.Mobile == mobile);
             Boolean canSendMessage = (customerDto != null && customerDto.OptStatus);
-            if (!String.IsNullOrEmpty(templateName) && templateName == Constants.MessageTemplates.Welcome)
+            if (!String.IsNullOrEmpty(templateName) && (templateName == Constants.MessageTemplates.Welcome || templateName == Constants.MessageTemplates.OPTED_OUT_RESPONSE))
             {
                 if (customerDto != null)
                 {

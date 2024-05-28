@@ -6,6 +6,8 @@
 
 <p>Gets all currently existing customers</p>
 
+<button @onclick="@(() => CreateCustomer())">Create New Customer</button>
+
 @if (users == null)
 {
     <p><em>Loading...</em></p>
@@ -41,6 +43,7 @@ else
                         <td>@user.Role</td>
                         <td>@user.OptStatus.ToString()</td>
                         <td>@user.OptStatusDetail</td>
+                        <td><button @onclick="@(() => EditCustomer(user.Id.Value))">Edit</button></td>
                         <td><button @onclick="@(() => GetClaims(user.Id.Value))">Get Active Claims</button></td>
                     </tr>
                 }

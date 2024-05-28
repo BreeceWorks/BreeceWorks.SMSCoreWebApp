@@ -1,5 +1,6 @@
 ﻿using BreeceWorks.CommunicationHub.Data.Contracts;
 using BreeceWorks.CommunicationHub.Dispatcher.Contracts;
+using BreeceWorks.Shared.CaseObjects;
 using BreeceWorks.Shared.Services;
 
 namespace BreeceWorks.CommunicationHub.Data.Implementation
@@ -20,8 +21,42 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
         }
         public async Task<BreeceWorks.Shared.CaseObjects.Users> GetAllUsers()
         {
-            Dispatcher.Proxies.Users usersResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Users, Dispatcher.Proxies.ApiClient>(x => x.UserAsync());
+            Dispatcher.Proxies.Users usersResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Users, Dispatcher.Proxies.ApiClient>(x => x.UserGetAsync());
             return _translatorService.TranslateToModel(usersResponse);
+        }
+
+        public async Task<Customer> GetUserById(Guid id)
+        {
+            Dispatcher.Proxies.Users usersResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Users, Dispatcher.Proxies.UserClient>(x => x.IdAsync(id));
+            Users users = _translatorService.TranslateToModel(usersResponse);
+            Customer customer1;
+            if (users.Customers.Any())
+            {
+                customer1 = users.Customers.First();
+            }
+            else
+            {
+                customer1 = new Customer();
+            }
+            customer1.Errors = users.Errors;
+            return customer1;
+        }
+
+        public async Task<Customer> SaveUser(Customer customer)
+        {
+            Dispatcher.Proxies.Users usersResponse = await _dispatcher.DispatchRequest<Dispatcher.Proxies.Users, Dispatcher.Proxies.ApiClient>(x => x.UserPostAsync(_translatorService.TranslateToProxy(customer)));
+            Users users = _translatorService.TranslateToModel(usersResponse);
+            Customer customer1;
+            if (users.Customers.Any())
+            {
+                customer1 = users.Customers.First();
+            }
+            else
+            {
+                customer1 = new Customer();
+            }
+            customer1.Errors = users.Errors;
+            return customer1;
         }
         public async Task<BreeceWorks.Shared.CaseObjects.Operators> GetAllOperators()
         {

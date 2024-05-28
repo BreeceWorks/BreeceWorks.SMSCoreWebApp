@@ -17,10 +17,10 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.20")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("BreeceWorks.Shared.Entities.CaseDto", b =>
                 {
@@ -106,7 +106,6 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
                     b.HasKey("PhoneNumber");
 
                     b.ToTable("CompanyPhoneNumbers");
-
                 });
 
             modelBuilder.Entity("BreeceWorks.Shared.Entities.CustomerDto", b =>
@@ -117,7 +116,7 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("First")
                         .IsRequired()
@@ -129,7 +128,7 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
 
                     b.Property<string>("Mobile")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("OptStatus")
                         .HasColumnType("bit");
@@ -142,6 +141,9 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email", "Mobile")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -269,7 +271,7 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TemplateId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TemplateId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -282,7 +284,6 @@ namespace BreeceWorks.Shared.Migrations.CommunicationDb
                     b.HasKey("TemplateId");
 
                     b.ToTable("MessageTemplates");
-
                 });
 
             modelBuilder.Entity("BreeceWorks.Shared.Entities.OperatorDto", b =>
