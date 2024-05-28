@@ -1,8 +1,11 @@
 ﻿using BreeceWorks.Shared.Enums;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace BreeceWorks.Shared.Entities
 {
+    [Index(nameof(Email), nameof(Mobile), IsUnique = true)]
     public class CustomerDto
     {
         [Key]
@@ -14,7 +17,6 @@ namespace BreeceWorks.Shared.Entities
         public CustomerRole Role { get; set; }
         public Boolean OptStatus { get; set; }
         public String OptStatusDetail { get; set; }
-
         public List<CaseDto>? Cases { get; set; }
     }
 }

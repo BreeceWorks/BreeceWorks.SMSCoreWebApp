@@ -1814,7 +1814,7 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
         /// Returns user information for all customers.
         /// </remarks>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<Users>> UserAsync();
+        System.Threading.Tasks.Task<SwaggerResponse<Users>> UserGetAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1824,7 +1824,26 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
         /// Returns user information for all customers.
         /// </remarks>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SwaggerResponse<Users>> UserAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SwaggerResponse<Users>> UserGetAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Save user
+        /// </summary>
+        /// <remarks>
+        /// Saves the user
+        /// </remarks>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SwaggerResponse<Users>> UserPostAsync(Customer body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save user
+        /// </summary>
+        /// <remarks>
+        /// Saves the user
+        /// </remarks>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<SwaggerResponse<Users>> UserPostAsync(Customer body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -2650,9 +2669,9 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
         /// Returns user information for all customers.
         /// </remarks>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SwaggerResponse<Users>> UserAsync()
+        public virtual System.Threading.Tasks.Task<SwaggerResponse<Users>> UserGetAsync()
         {
-            return UserAsync(System.Threading.CancellationToken.None);
+            return UserGetAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -2663,7 +2682,7 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
         /// Returns user information for all customers.
         /// </remarks>
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SwaggerResponse<Users>> UserAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SwaggerResponse<Users>> UserGetAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2672,6 +2691,104 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/User"
+                    urlBuilder_.Append("api/User");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<Users>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new SwaggerException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return new SwaggerResponse<Users>(status_, headers_, objectResponse_.Object);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("A server side error occurred.", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Save user
+        /// </summary>
+        /// <remarks>
+        /// Saves the user
+        /// </remarks>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<SwaggerResponse<Users>> UserPostAsync(Customer body)
+        {
+            return UserPostAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Save user
+        /// </summary>
+        /// <remarks>
+        /// Saves the user
+        /// </remarks>
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<SwaggerResponse<Users>> UserPostAsync(Customer body, System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
@@ -4208,6 +4325,7 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
         private CaseData _caseData;
         private string _caseType;
         private string _businessName;
+        private string _smsNumber;
         private Customer _customer;
         private Operator _primaryContact;
         private Operator _createdBy;
@@ -4271,6 +4389,21 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
                 if (_businessName != value)
                 {
                     _businessName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("smsNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SmsNumber
+        {
+            get { return _smsNumber; }
+
+            set
+            {
+                if (_smsNumber != value)
+                {
+                    _smsNumber = value;
                     RaisePropertyChanged();
                 }
             }
@@ -4919,6 +5052,7 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
         private CaseData _caseData;
         private string _caseType;
         private string _businessName;
+        private string _smsNumber;
         private Customer _customer;
         private Operator _primaryContact;
         private Operator _createdBy;
@@ -4983,6 +5117,21 @@ namespace BreeceWorks.CommunicationHub.Dispatcher.Proxies
                 if (_businessName != value)
                 {
                     _businessName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [Newtonsoft.Json.JsonProperty("smsNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SmsNumber
+        {
+            get { return _smsNumber; }
+
+            set
+            {
+                if (_smsNumber != value)
+                {
+                    _smsNumber = value;
                     RaisePropertyChanged();
                 }
             }

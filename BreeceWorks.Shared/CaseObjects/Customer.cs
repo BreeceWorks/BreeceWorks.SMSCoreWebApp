@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace BreeceWorks.Shared.CaseObjects
         private string _role;
         private bool? _optStatus;
         private string _optStatusDetail;
+        private System.Collections.Generic.List<Error> _errors;
+
 
         public System.Guid? Id
         {
@@ -30,6 +33,8 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
+        [Required(ErrorMessage = "First Name is required")]
+
         public string First
         {
             get { return _first; }
@@ -42,6 +47,8 @@ namespace BreeceWorks.Shared.CaseObjects
                 }
             }
         }
+
+        [Required(ErrorMessage = "Last Name is required")]
 
         public string Last
         {
@@ -56,6 +63,8 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
+        [Required(ErrorMessage = "Email is required")]
+
         public string Email
         {
             get { return _email; }
@@ -68,6 +77,8 @@ namespace BreeceWorks.Shared.CaseObjects
                 }
             }
         }
+
+        [Required(ErrorMessage = "Mobile number is required")]
 
         public string Mobile
         {
@@ -95,9 +106,15 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
-        public bool? OptStatus
+        public bool OptStatus
         {
-            get { return _optStatus; }
+            get 
+            { 
+                if (_optStatus == null || !_optStatus.HasValue)
+                    return false;
+                else
+                    return _optStatus.Value; 
+            }
 
             set
             {
@@ -117,6 +134,19 @@ namespace BreeceWorks.Shared.CaseObjects
                 if (_optStatusDetail != value)
                 {
                     _optStatusDetail = value;
+                }
+            }
+        }
+
+        public System.Collections.Generic.List<Error> Errors
+        {
+            get { return _errors; }
+
+            set
+            {
+                if (_errors != value)
+                {
+                    _errors = value;
                 }
             }
         }

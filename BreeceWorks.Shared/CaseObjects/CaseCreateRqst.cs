@@ -1,13 +1,14 @@
 ﻿using BreeceWorks.Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BreeceWorks.Shared.CaseObjects
 {
-    public partial class CaseCreateRqst
+    public class CaseCreateRqst
     {
         private CaseDataCreateUpdateRqst _caseData;
         private OperatorBaseRqst _createdBy;
@@ -19,6 +20,7 @@ namespace BreeceWorks.Shared.CaseObjects
         private string _caseType;
         private CustomerCreateUpdateRqst _customer;
 
+        [Required(ErrorMessage = "Case Data is required")]
         public CaseDataCreateUpdateRqst CaseData
         {
             get { return _caseData; }
@@ -110,6 +112,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
+        [Required(ErrorMessage = "Case Type is required")]
         public string CaseType
         {
             get { return _caseType; }
@@ -123,6 +126,7 @@ namespace BreeceWorks.Shared.CaseObjects
             }
         }
 
+        [Required(ErrorMessage = "Customer is required")]
         public CustomerCreateUpdateRqst Customer
         {
             get { return _customer; }

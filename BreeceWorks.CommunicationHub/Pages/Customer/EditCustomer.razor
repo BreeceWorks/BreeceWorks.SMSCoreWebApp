@@ -1,0 +1,38 @@
+﻿@page "/editCustomer"
+
+
+
+<h3>Edit Customer</h3>
+
+
+@if (EditingCustomer == null && ErrorMessage == null)
+{
+    <p>
+        <em>Loading ...</em>
+    </p>
+}
+else if (!String.IsNullOrEmpty(ErrorMessage))
+{
+    <p style="color:red">
+        <em>@ErrorMessage</em>
+    </p>
+}
+@if (EditingCustomer != null)
+{
+    <EditForm Model=@EditingCustomer Context="generalFormContext" OnSubmit="Submit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <table>
+            <tr><td><label>First Name: </label></td><td><InputText @bind-Value="EditingCustomer.First" /></td><td>*required</td></tr>
+            <tr><td><label>Last Name: </label></td><td><InputText @bind-Value="EditingCustomer.Last" /></td><td>*required</td></tr>
+            <tr><td><label>Email: </label></td><td><InputText @bind-Value="EditingCustomer.Email" /></td><td>*required</td></tr>
+            <tr><td><label>Phone Number: </label></td><td><InputText @bind-Value="EditingCustomer.Mobile" /><td>*required</td></td></tr>
+            <tr><td><label>Role: </label></td><td><label>@EditingCustomer.Role</label></td></tr>
+            <tr><td><label>Opted In To Recieve SMS: </label></td><td><InputCheckbox @bind-Value="EditingCustomer.OptStatus" /></td></tr>
+        </table>
+        <table>
+            <tr><td><button id="generalValidation" type="submit">Submit</button></td><td><button type="button" @onclick="@(() => Cancel())">Cancel</button></td></tr>
+        </table>
+    </EditForm>
+
+}

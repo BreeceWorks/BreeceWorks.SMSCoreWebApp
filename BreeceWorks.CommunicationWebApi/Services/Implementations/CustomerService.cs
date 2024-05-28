@@ -5,6 +5,7 @@ using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Entities;
 using BreeceWorks.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.CodeDom;
 
 namespace BreeceWorks.CommunicationWebApi.Services.Implementations
 {
@@ -33,6 +34,26 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 .First(u => u.Id == customer.Id);
 
             return  customer;
+        }
+
+        public CustomerDto? UpdateCustomerDto(CustomerDto customerDto)
+        {
+            CustomerDto? customer = _context.Customers
+                .FirstOrDefault(u => u.Id == customerDto.Id);
+            if (customer == null)
+            {
+                return null;
+            }
+            customer.Id = customerDto.Id;
+            customer.First = customerDto.First;
+            customer.Last = customerDto.Last;   
+            customer.Email = customerDto.Email;
+            customer.Mobile = customerDto.Mobile;
+            customer.OptStatus = customerDto.OptStatus;
+            customer.OptStatusDetail = customerDto.OptStatusDetail;
+            _context.Customers.Update(customer);
+            _context.SaveChanges();
+            return customer;
         }
 
         public ResponseObjects.Case[]? GetCustomerActiveCasesByEmail(string email)
@@ -157,5 +178,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             }
             return customerDto;
         }
+
+        
     }
 }

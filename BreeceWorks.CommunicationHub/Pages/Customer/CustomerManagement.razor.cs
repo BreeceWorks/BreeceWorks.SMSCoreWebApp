@@ -35,5 +35,18 @@ namespace BreeceWorks.CommunicationHub.Pages.Customer
         {
             NavManager.NavigateTo(string.Format("/customercases?UserID={0}", userId));
         }
+
+        protected void EditCustomer(Guid customerId)
+        {
+            Error = String.Empty;
+            NavManager.NavigateTo(string.Format("/editCustomer?CustomerID={0}", customerId));
+
+        }
+
+        protected void CreateCustomer()
+        {
+            NavManager.NavigateTo("/newCustomer");
+        }
+
     }
 }

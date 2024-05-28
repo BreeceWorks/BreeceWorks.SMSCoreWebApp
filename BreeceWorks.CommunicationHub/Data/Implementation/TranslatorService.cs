@@ -187,6 +187,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
                     Privacy = curCase.Privacy,
                     SecondaryOperators = TranslateToModel(curCase.SecondaryOperators),
                     State = curCase.State,
+                    SMSNumber = curCase.SmsNumber,
                 };
             }
         }
@@ -271,7 +272,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
                     Id = customer.Id,
                     Last = customer.Last,
                     Mobile = customer.Mobile,
-                    OptStatus = customer.OptStatus,
+                    OptStatus = customer.OptStatus.HasValue ? customer.OptStatus.Value : false,
                     OptStatusDetail = customer.OptStatusDetail,
                     Role = customer.Role,
                 };
@@ -298,6 +299,7 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
                 Privacy = caseTranscript.Privacy,
                 SecondaryOperators = TranslateToModel(caseTranscript.SecondaryOperators),
                 State = caseTranscript.State,
+                SMSNumber = caseTranscript.SmsNumber,
             };
             return caseTranscript1;
         }
@@ -843,6 +845,28 @@ namespace BreeceWorks.CommunicationHub.Data.Implementation
             }
         }
 
+        public Dispatcher.Proxies.Customer TranslateToProxy(BreeceWorks.Shared.CaseObjects.Customer customer)
+        {
+            if (customer == null)
+            {
+                return null;
+            }
+            else
+            {
+                Dispatcher.Proxies.Customer sMSOutgoingCommunication1 = new Dispatcher.Proxies.Customer()
+                {
+                    Email = customer.Email,
+                    First = customer.First,
+                    Id = customer.Id,
+                    Last = customer.Last,
+                    Mobile = customer.Mobile,
+                    OptStatus = customer.OptStatus,
+                    OptStatusDetail = customer.OptStatusDetail,
+                    Role = customer.Role,
+                };
+                return sMSOutgoingCommunication1;
+            }
+        }
 
 
         #endregion
