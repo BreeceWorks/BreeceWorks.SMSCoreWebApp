@@ -341,14 +341,14 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 
                 foreach(CompanyPhoneNumberDto companyNumberDto in _context.CompanyPhoneNumbers)
                 {
-                    if (!assignedNumbers.Contains(companyNumberDto.PhoneNumber))
+                    if (!assignedNumbers.Contains(companyNumberDto.PhoneNumber) && companyNumberDto.IsActive)
                     {
                         return companyNumberDto.PhoneNumber;
                     }
                 }
             }
             // If the customer has no open cases, just pick one.
-            return _context.CompanyPhoneNumbers.First().PhoneNumber;
+            return _context.CompanyPhoneNumbers.Where(p => p.IsActive).First().PhoneNumber;
         }
 
         public CaseDtoRspse AssignCase(String caseId, CaseAssignmentRequest? assignmentRequest = null)

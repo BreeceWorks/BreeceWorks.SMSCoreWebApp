@@ -1,8 +1,10 @@
+using BreeceWorks.Shared.CustomAuthorization;
 using BreeceWorks.Shared.DbContexts;
 using BreeceWorks.Shared.Services;
 using BreeceWorks.SMSCoreWebApi.Controllers;
 using BreeceWorks.SMSCoreWebApi.Services.Implementation;
 using BreeceWorks.SMSCoreWebApi.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +46,18 @@ builder.Services.AddSwaggerGen(c =>
 //});
 
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+builder.Services.AddAuthentication().AddCookie();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomSMSAuthorizatioPolicy", policy =>
+    {
+        policy.Requirements.Add(new CustomAuthorizationRequirement());
+    });
+});
+
+
 builder.Services.AddScoped<IConfigureService, ConfigureService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
 
@@ -77,6 +91,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

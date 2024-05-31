@@ -1,5 +1,6 @@
 ﻿using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,6 +20,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 
         [HttpGet]
         [Route("attachment-download/{attachmentID}")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public IActionResult AttachmentDownload(String attachmentID)
         {
             MediaAttachment? downloadAttachment = _mediaService.GetMediaAttachment(attachmentID);

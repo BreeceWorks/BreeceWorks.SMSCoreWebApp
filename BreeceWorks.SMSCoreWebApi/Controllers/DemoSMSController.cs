@@ -2,6 +2,7 @@
 using BreeceWorks.Shared.Services;
 using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.IControllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -27,6 +28,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         }
 
         [HttpPost, Route("[controller]/VerifyValidMobile/{phoneNumber}")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public async Task<MobileNumberValidationResponse> VerifyValidMobile(String phoneNumber)
         {
             //This is a simple simulator which assumes any number entered is valid
@@ -38,6 +40,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
 
 
         [HttpPost, Route("[controller]/Outgoing")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public async Task<SMSIncomingeMessage> Outgoing(SMSOutgoingMessage sMSMessage)
         {
             SMSIncomingeMessage sMSResponseMessage = new SMSIncomingeMessage()
@@ -97,6 +100,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         }
 
         [HttpPost, Route("[controller]/CleanUpIncomingMessage")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
         {
             

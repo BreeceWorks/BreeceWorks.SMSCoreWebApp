@@ -4,6 +4,7 @@ using BreeceWorks.Shared.SMS;
 using BreeceWorks.SMSCoreWebApi.IControllers;
 using BreeceWorks.SMSCoreWebApi.Objects;
 using BreeceWorks.SMSCoreWebApi.Validation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 using System.Text.Json;
@@ -40,6 +41,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         }
 
         [HttpPost, Route("[controller]/VerifyValidMobile/{phoneNumber}")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public async Task<MobileNumberValidationResponse> VerifyValidMobile(String phoneNumber)
         {
             String responseMessage = String.Empty;
@@ -69,6 +71,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         }
 
         [HttpPost, Route("[controller]/Outgoing")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public async Task<SMSIncomingeMessage> Outgoing(SMSOutgoingMessage sMSMessage)
         {
             SMSIncomingeMessage sMSResponseMessage = new SMSIncomingeMessage()
@@ -135,6 +138,41 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             return sMSResponseMessage;
         }
 
+        [HttpPost, Route("[controller]/CleanUpIncomingMessage")]
+        [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
+        public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
+        {
+            // This is to avoid having data out there on Twilio's servers you may not want an outsider to see.  Doing it at this time does not interfere with sending and receiving messages on my
+            // mobile carrier.  However, other mobile carriers might be different.  In a later version this information should be saved to a database and 
+            // cleanup operatiuons carried out at a later time by a service.
+            String? authToken = _configureService.GetValue("Twilio:AuthToken");
+            String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
+
+            TwilioClient.Init(accountSid, authToken);
+
+            if (sMSMessage.attachmentUrls != null && sMSMessage.attachmentUrls.Count > 0)
+            {
+                List<String> mediaSids = new List<String>();
+                ResourceSet<MediaResource> media = MediaResource.Read(
+                        pathMessageSid: sMSMessage.messageID,
+                        limit: sMSMessage.attachmentUrls.Count
+                    );
+
+                foreach (MediaResource record in media)
+                {
+                    mediaSids.Add(record.Sid);
+                }
+                foreach (String sid in mediaSids)
+                {
+                    MediaResource.Delete(
+                        pathMessageSid: sMSMessage.messageID,
+                        pathSid: sid
+                    );
+                }
+            }
+            MessageResource.Delete(pathSid: sMSMessage.messageID);
+        }
+
 
         private const string SavePath = @"\App_Data\";
 
@@ -180,66 +218,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             return TwiML(response);
         }
 
-        private SmsRequest RemoveInternational(SmsRequest request)
-        {
-            if (request.To.IndexOf("+1") == 0)
-            {
-                request.To = request.To.Remove(0, 2);
-            }
-            if (request.From.IndexOf("+1") == 0)
-            {
-                request.From = request.From.Remove(0, 2);
-            }
-            return request;
-        }
 
-
-        private string GetFileName(string url)
-        {
-            String fileName = String.Empty;
-            try
-            {
-                string[] segmentArray = url.Split('/');
-
-                fileName = segmentArray[segmentArray.Length - 1];
-            }
-            catch (Exception ex)
-            {
-            }
-
-            return fileName;
-        }
-
-        [HttpPost, Route("[controller]/CleanUpIncomingMessage")]
-        public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
-        {
-            String? authToken = _configureService.GetValue("Twilio:AuthToken");
-            String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
-
-            TwilioClient.Init(accountSid, authToken);
-
-            if (sMSMessage.attachmentUrls != null && sMSMessage.attachmentUrls.Count > 0)
-            {
-                List<String> mediaSids = new List<String>();
-                ResourceSet<MediaResource> media = MediaResource.Read(
-                        pathMessageSid: sMSMessage.messageID,
-                        limit: sMSMessage.attachmentUrls.Count
-                    );
-
-                foreach (MediaResource record in media)
-                {
-                    mediaSids.Add(record.Sid);
-                }
-                foreach (String sid in mediaSids)
-                {
-                    MediaResource.Delete(
-                        pathMessageSid: sMSMessage.messageID,
-                        pathSid: sid
-                    );
-                }
-            }
-            MessageResource.Delete(pathSid: sMSMessage.messageID);
-        }
 
         [HttpPost, Route("[controller]/sms_status_callback")]
         [ValidateTwilioRequest]
@@ -255,6 +234,11 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
                 HttpResponseMessage httpResponse = _httpClient.PostAsJsonAsync(Constants.URLTemplates.StatusCallback, sMSMessageStatus).Result;
                 if (request.MessageStatus.ToUpper() == Constants.MessageStatus.DELIVERED)
                 {
+
+                    // This is to avoid having data out there on Twilio's servers you may not want an outsider to see.  Doing it at this time does not interfere with sending and receiving messages on my
+                    // mobile carrier.  However, other mobile carriers might be different.  In a later version this information should be saved to a database and 
+                    // cleanup operatiuons carried out at a later time by a service.
+
                     String? authToken = _configureService.GetValue("Twilio:AuthToken");
                     String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
 
@@ -296,8 +280,35 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         }
 
 
+        private SmsRequest RemoveInternational(SmsRequest request)
+        {
+            if (request.To.IndexOf("+1") == 0)
+            {
+                request.To = request.To.Remove(0, 2);
+            }
+            if (request.From.IndexOf("+1") == 0)
+            {
+                request.From = request.From.Remove(0, 2);
+            }
+            return request;
+        }
 
 
+        private string GetFileName(string url)
+        {
+            String fileName = String.Empty;
+            try
+            {
+                string[] segmentArray = url.Split('/');
+
+                fileName = segmentArray[segmentArray.Length - 1];
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return fileName;
+        }
 
 
         private String HandleLookupPhoneNumber(PhoneNumberResource lookupPhoneNumber)
@@ -352,7 +363,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             return String.Empty;
         }
 
-        public static string GetDefaultExtension(string mimeType)
+        private static string GetDefaultExtension(string mimeType)
         {
             // NOTE: This implementation is Windows specific (uses Registry)
             // Platform independent way might be to download a known list of
