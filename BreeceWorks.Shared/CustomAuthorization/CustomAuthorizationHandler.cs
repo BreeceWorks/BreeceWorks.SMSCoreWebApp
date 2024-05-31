@@ -32,6 +32,7 @@ namespace BreeceWorks.Shared.CustomAuthorization
 
         private Boolean IsAuthorizationSuccessful(CustomAuthorizationRequirement requirement)
         {
+            // This is where you would do authorization logic
             return true;
         }
     }

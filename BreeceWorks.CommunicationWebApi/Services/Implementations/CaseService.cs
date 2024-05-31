@@ -341,7 +341,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
                 
                 foreach(CompanyPhoneNumberDto companyNumberDto in _context.CompanyPhoneNumbers)
                 {
-                    if (!assignedNumbers.Contains(companyNumberDto.PhoneNumber))
+                    if (!assignedNumbers.Contains(companyNumberDto.PhoneNumber) && companyNumberDto.IsActive)
                     {
                         return companyNumberDto.PhoneNumber;
                     }
