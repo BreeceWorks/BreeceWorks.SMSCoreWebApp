@@ -8,5 +8,6 @@ namespace BreeceWorks.Shared.Entities
         public String PhoneNumber { get; set; }
 
         public String SMSProcessor { get; set; }
+        public Boolean IsActive {  get; set; }
     }
 }

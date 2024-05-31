@@ -277,7 +277,7 @@ namespace BreeceWorks.CommunicationWebApi.Services.Implementations
             CaseDto? caseDto = _context.Cases
                 .Include(m => m.Messages)
                 .Include(cu => cu.Customer)
-                .Where(c => c.SMSNumber == sMSMessage.toNumber && c.Customer.Mobile == sMSMessage.fromNumber && c.Archived == false && c.State == CaseState.open).FirstOrDefault();
+                .Where(c => (c.SMSNumber == sMSMessage.toNumber || c.SMSNumber == "+1" + sMSMessage.toNumber) && (c.Customer.Mobile == sMSMessage.fromNumber || c.Customer.Mobile == "+1" + sMSMessage.fromNumber) && c.Archived == false && c.State == CaseState.open).FirstOrDefault();
             if (caseDto == null)
             {   // this is to preserve messages sent by a customer for an old case
                 caseDto = _context.Cases
