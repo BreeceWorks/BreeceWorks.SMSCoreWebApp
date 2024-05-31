@@ -142,6 +142,9 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
         [Authorize(Policy = "CustomSMSAuthorizatioPolicy")]
         public void CleanUpIncomingMessage(SMSIncomingeMessage sMSMessage)
         {
+            // This is to avoid having data out there on Twilio's servers you may not want an outsider to see.  Doing it at this time does not interfere with sending and receiving messages on my
+            // mobile carrier.  However, other mobile carriers might be different.  In a later version this information should be saved to a database and 
+            // cleanup operatiuons carried out at a later time by a service.
             String? authToken = _configureService.GetValue("Twilio:AuthToken");
             String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
 
@@ -231,6 +234,11 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
                 HttpResponseMessage httpResponse = _httpClient.PostAsJsonAsync(Constants.URLTemplates.StatusCallback, sMSMessageStatus).Result;
                 if (request.MessageStatus.ToUpper() == Constants.MessageStatus.DELIVERED)
                 {
+
+                    // This is to avoid having data out there on Twilio's servers you may not want an outsider to see.  Doing it at this time does not interfere with sending and receiving messages on my
+                    // mobile carrier.  However, other mobile carriers might be different.  In a later version this information should be saved to a database and 
+                    // cleanup operatiuons carried out at a later time by a service.
+
                     String? authToken = _configureService.GetValue("Twilio:AuthToken");
                     String? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
 
