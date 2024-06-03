@@ -12,9 +12,10 @@ UPDATE [dbo].[Configurations]
 GO
 
 UPDATE [dbo].[Configurations]
-   SET [Value] ='Twilio:StatusCallbackUrl' /****** put the Twilio StatusCallbackUrl here ******/
- WHERE Name = 'Twilio:StatusCallbackUrl'
+   SET [Value] ='BreeceWorks.SMSCoreWebApi' /****** put the Twilio StatusCallbackUrl here ******/
+ WHERE Name = 'BreeceWorks.SMSCoreWebApi'
 GO
+
 
 
 INSERT INTO [dbo].[CompanyPhoneNumbers]

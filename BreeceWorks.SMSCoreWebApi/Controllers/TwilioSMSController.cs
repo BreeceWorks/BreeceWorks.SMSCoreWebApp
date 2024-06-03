@@ -86,7 +86,7 @@ namespace BreeceWorks.SMSCoreWebApi.Controllers
             {
                 String? authToken = _configureService.GetValue("Twilio:AuthToken");
                 string? accountSid = _configureService.GetValue("Twilio:Client:AccountSid");
-                String? statusCallBackurl = _configureService.GetValue("Twilio:StatusCallbackUrl");
+                String? statusCallBackurl = _configureService.GetValue("BreeceWorks.SMSCoreWebApi") + Constants.URLTemplates.TwilioStatusCallbackURL;
 
 
 
