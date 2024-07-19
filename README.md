@@ -1,4 +1,4 @@
-# BreeceWorks.SignalRTwilioChat
+# BreeceWorks.SMSCoreWebApp
 A demo of communication betwee a SignalR chat app and a mobile phone via Twilio sms.  
 
 It is a simple proof of concept of how an agent could use a chat app to send messages to a clients mobile phone via Twilio's sms methods.  The client could then respond by sending an sms message, which Twilio would then deliver to a webhook, which is part of the code.  The webhook then relays the response to the agent's chat app via Signal R.  
